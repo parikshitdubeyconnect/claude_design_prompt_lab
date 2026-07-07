@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; background: #0A1B30; }
+  a { color: #00B8F5; } a:hover { color: #ACEAFF; }
+  @keyframes blinkCaret { 0%, 55% { opacity: 1; } 56%, 100% { opacity: 0; } }
+  @keyframes pulseDot { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+  @keyframes slideIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  @keyframes drift1 { 0% { transform: translate(-8%, -6%) scale(1); } 50% { transform: translate(10%, 8%) scale(1.25); } 100% { transform: translate(-8%, -6%) scale(1); } }
+  @keyframes drift2 { 0% { transform: translate(6%, 10%) scale(1.15); } 50% { transform: translate(-10%, -8%) scale(0.9); } 100% { transform: translate(6%, 10%) scale(1.15); } }
+  @keyframes drift3 { 0% { transform: translate(0, 0) scale(1); } 33% { transform: translate(-6%, 10%) scale(1.2); } 66% { transform: translate(8%, -6%) scale(0.95); } 100% { transform: translate(0, 0) scale(1); } }
+  @keyframes gridSlide { 0% { background-position: 0 0; } 100% { background-position: 56px 56px; } }
+  @keyframes wheelSpin { to { transform: rotate(-360deg); } }
+  @keyframes beamSweep { 0% { transform: translateX(-60vw) rotate(18deg); opacity: 0; } 12% { opacity: 0.5; } 50% { opacity: 0.5; } 88% { opacity: 0; } 100% { transform: translateX(160vw) rotate(18deg); opacity: 0; } }
+  ::selection { background: rgba(0,184,245,0.35); }
+</style>
+</helmet>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="200" height="200" fill="#0A1B30"/><rect x="60" y="60" width="80" height="80" rx="18" fill="#1E49E2"/><text x="100" y="112" font-family="sans-serif" font-size="34" font-weight="800" fill="#ffffff" text-anchor="middle">PL</text></svg></template>
+<div data-screen-label="Prompt Lab" style="min-height: 100vh; color: #E8F0FA; font-family: 'Public Sans', system-ui, sans-serif; display: flex; flex-direction: column; position: relative; isolation: isolate;">
+
+  <!-- Animated background -->
+  <div style="position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; background: linear-gradient(160deg, #081527 0%, #0A1B30 45%, #0C1F3E 100%);">
+    <div style="position: absolute; inset: 0; background-image: radial-gradient(rgba(120,170,230,0.10) 1px, transparent 1.5px); background-size: 28px 28px; animation: gridSlide 60s linear infinite;"></div>
+    <div style="position: absolute; top: -20%; left: -10%; width: 55vw; height: 55vw; border-radius: 50%; background: radial-gradient(circle, rgba(30,73,226,0.28) 0%, transparent 65%); filter: blur(50px); animation: drift1 26s ease-in-out infinite;"></div>
+    <div style="position: absolute; bottom: -25%; right: -12%; width: 60vw; height: 60vw; border-radius: 50%; background: radial-gradient(circle, rgba(0,184,245,0.16) 0%, transparent 65%); filter: blur(60px); animation: drift2 32s ease-in-out infinite;"></div>
+    <div style="position: absolute; top: 25%; right: 20%; width: 34vw; height: 34vw; border-radius: 50%; background: radial-gradient(circle, rgba(159,123,255,0.13) 0%, transparent 65%); filter: blur(55px); animation: drift3 38s ease-in-out infinite;"></div>
+    <div style="position: absolute; top: -20%; left: 0; width: 220px; height: 140vh; background: linear-gradient(90deg, transparent, rgba(172,234,255,0.05), transparent); animation: beamSweep 18s ease-in-out infinite;"></div>
+  </div>
+
+  <!-- Header -->
+  <header style="display: flex; align-items: center; gap: 16px; padding: 16px 28px; border-bottom: 1px solid rgba(140,170,210,0.14); backdrop-filter: blur(2px);">
+    <div style="width: 34px; height: 34px; border-radius: 8px; background: #1E49E2; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: #fff;">PL</div>
+    <div style="display: flex; flex-direction: column; gap: 2px;">
+      <div style="font-size: 17px; font-weight: 700; letter-spacing: 0.2px;">Prompt Lab</div>
+      <div style="font-size: 12px; color: #93A9C6;">Prompting for Leadership · Demystifying AI seminar</div>
+    </div>
+    <div style="flex: 1;"></div>
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <div style="display: flex; align-items: center; gap: 10px; padding: 5px 14px 5px 6px; border-radius: 12px; border: 1px solid rgba(0,184,245,0.35); background: rgba(0,184,245,0.06);">
+        <div style="width: 42px; height: 42px; border-radius: 8px; background: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+          <div style="display: grid; grid-template-columns: repeat(7, 4.5px); grid-auto-rows: 4.5px; gap: 0.8px;">
+            <sc-for list="{{ qrCells }}" as="q" hint-placeholder-count="49">
+              <div style="background: {{ q }}; border-radius: 0.8px;"></div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 1px;">
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #ACEAFF; font-weight: 700;">
+            <span style="width: 7px; height: 7px; border-radius: 50%; background: #33E0A0; animation: pulseDot 2s infinite;"></span>
+            Session 4271 · {{ participants }} joined
+          </div>
+          <div style="font-size: 11px; color: #93A9C6;">Scan any time to join — your phone lands on the live exercise</div>
+        </div>
+      </div>
+      <div style="padding: 7px 14px; border-radius: 999px; background: rgba(255,181,71,0.12); border: 1px solid rgba(255,181,71,0.35); font-size: 12px; color: #FFB547; font-weight: 600;">Synthetic scenarios only — no client or personal data</div>
+    </div>
+  </header>
+
+  <main style="display: flex; gap: 28px; padding: 20px 28px 40px; align-items: flex-start;">
+
+    <!-- ══════════ Facilitator screen ══════════ -->
+    <section data-screen-label="Facilitator screen" style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 14px;">
+
+      <!-- stepper -->
+      <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+        <div style="font-size: 11px; font-weight: 700; letter-spacing: 1.2px; color: #93A9C6; text-transform: uppercase; margin-right: 8px;">Facilitator · projected screen</div>
+
+        <button onClick="{{ goLobby }}" style="padding: 8px 16px; border-radius: 999px; border: 1px solid {{ lobbyBorder }}; background: {{ lobbyBg }}; color: {{ lobbyColor }}; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer;" style-hover="border-color: rgba(172,234,255,0.5);">1 · Lobby</button>
+
+        <div style="position: relative;">
+          <button onClick="{{ toggleMenu1 }}" style="padding: 8px 16px; border-radius: 999px; border: 1px solid {{ ex1Border }}; background: {{ ex1Bg }}; color: {{ ex1Color }}; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer;" style-hover="border-color: rgba(172,234,255,0.5);">2 · Write the prompt {{ ex1Suffix }} ▾</button>
+          <sc-if value="{{ menu1Open }}" hint-placeholder-val="{{ false }}">
+            <div style="position: absolute; top: 42px; left: 0; z-index: 40; background: #10263F; border: 1px solid rgba(140,170,210,0.3); border-radius: 12px; padding: 6px; display: flex; flex-direction: column; gap: 2px; min-width: 260px; box-shadow: 0 12px 32px rgba(0,0,0,0.45); animation: slideIn 0.15s ease;">
+              <sc-for list="{{ ex1Items }}" as="it" hint-placeholder-count="3">
+                <button onClick="{{ it.go }}" style="text-align: left; padding: 10px 12px; border-radius: 8px; border: none; background: {{ it.bg }}; color: {{ it.color }}; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; gap: 10px; align-items: baseline;" style-hover="background: rgba(0,184,245,0.12);"><span style="font-weight: 800; color: #00B8F5;">{{ it.num }}</span> {{ it.name }}</button>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+
+        <div style="position: relative;">
+          <button onClick="{{ toggleMenu2 }}" style="padding: 8px 16px; border-radius: 999px; border: 1px solid {{ ex2Border }}; background: {{ ex2Bg }}; color: {{ ex2Color }}; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer;" style-hover="border-color: rgba(172,234,255,0.5);">3 · Rate the prompts {{ ex2Suffix }} ▾</button>
+          <sc-if value="{{ menu2Open }}" hint-placeholder-val="{{ false }}">
+            <div style="position: absolute; top: 42px; left: 0; z-index: 40; background: #10263F; border: 1px solid rgba(140,170,210,0.3); border-radius: 12px; padding: 6px; display: flex; flex-direction: column; gap: 2px; min-width: 260px; box-shadow: 0 12px 32px rgba(0,0,0,0.45); animation: slideIn 0.15s ease;">
+              <sc-for list="{{ ex2Items }}" as="it" hint-placeholder-count="3">
+                <button onClick="{{ it.go }}" style="text-align: left; padding: 10px 12px; border-radius: 8px; border: none; background: {{ it.bg }}; color: {{ it.color }}; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; gap: 10px; align-items: baseline;" style-hover="background: rgba(159,123,255,0.15);"><span style="font-weight: 800; color: #9F7BFF;">{{ it.num }}</span> {{ it.name }}</button>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+
+        <div style="flex: 1;"></div>
+        <button onClick="{{ reset }}" style="padding: 8px 14px; border-radius: 999px; border: 1px solid rgba(140,170,210,0.3); background: transparent; color: #93A9C6; font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer;" style-hover="color: #E8F0FA;">Reset session</button>
+      </div>
+
+      <!-- ─── LOBBY ─── -->
+      <sc-if value="{{ showLobby }}" hint-placeholder-val="{{ true }}">
+        <div style="display: grid; grid-template-columns: 1fr 1.3fr; gap: 14px;">
+          <div style="background: #10263F; border: 1px solid rgba(140,170,210,0.16); border-radius: 16px; padding: 28px; display: flex; flex-direction: column; align-items: center; gap: 18px; text-align: center;">
+            <div style="font-size: 13px; font-weight: 700; letter-spacing: 1px; color: #00B8F5; text-transform: uppercase;">Join on your phone</div>
+            <div style="width: 148px; height: 148px; border-radius: 14px; background: #fff; display: flex; align-items: center; justify-content: center;">
+              <div style="display: grid; grid-template-columns: repeat(7, 14px); grid-auto-rows: 14px; gap: 2px;">
+                <sc-for list="{{ qrCells }}" as="q" hint-placeholder-count="49">
+                  <div style="background: {{ q }}; border-radius: 2px;"></div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <sc-for list="{{ codeDigits }}" as="d" hint-placeholder-count="4">
+                <div style="width: 44px; height: 52px; border-radius: 10px; background: #0D2035; border: 1px solid rgba(0,184,245,0.4); display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 800; color: #ACEAFF;">{{ d }}</div>
+              </sc-for>
+            </div>
+            <div style="font-size: 13px; color: #93A9C6;">Scan the QR or enter the code. No login, nothing stored after the session.</div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 14px;">
+            <div style="background: #10263F; border: 1px solid rgba(140,170,210,0.16); border-radius: 16px; padding: 22px 24px; display: flex; flex-direction: column; gap: 8px;">
+              <div style="font-size: 12px; font-weight: 800; letter-spacing: 1px; color: #00B8F5;">EXERCISE 1</div>
+              <div style="font-size: 19px; font-weight: 800;">Write the prompt</div>
+              <div style="font-size: 14px; color: #C9D8EC; line-height: 1.6;">Three realistic tasks — a client escalation, a requirements document, a piece of legacy code. Write the prompt you'd give an AI assistant, on your phone. We'll put a few on screen and run them against Claude, live.</div>
+            </div>
+            <div style="background: #10263F; border: 1px solid rgba(140,170,210,0.16); border-radius: 16px; padding: 22px 24px; display: flex; flex-direction: column; gap: 8px;">
+              <div style="font-size: 12px; font-weight: 800; letter-spacing: 1px; color: #9F7BFF;">EXERCISE 2</div>
+              <div style="font-size: 19px; font-weight: 800;">Rate the prompts</div>
+              <div style="font-size: 14px; color: #C9D8EC; line-height: 1.6;">Same tasks, three prompts each. Rate every prompt — not so good, okay, or fantastic — then we reveal what separates them.</div>
+            </div>
+            <div style="background: rgba(51,224,160,0.07); border: 1px solid rgba(51,224,160,0.25); border-radius: 16px; padding: 16px 24px; display: flex; align-items: center; gap: 14px;">
+              <span style="font-size: 26px; font-weight: 800; color: #33E0A0;">{{ participants }}</span>
+              <span style="font-size: 14px; color: #C9D8EC;">participants in the room and counting…</span>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ─── EXERCISE 1 ─── -->
+      <sc-if value="{{ showEx1 }}" hint-placeholder-val="{{ false }}">
+        <div style="background: #10263F; border: 1px solid rgba(140,170,210,0.16); border-radius: 14px; padding: 16px 20px; display: flex; flex-direction: column; gap: 10px;">
+          <div style="display: flex; gap: 20px; align-items: baseline;">
+            <div style="font-size: 11px; font-weight: 700; letter-spacing: 1px; color: #00B8F5; text-transform: uppercase; white-space: nowrap;">{{ ex1Tag }} · The ask</div>
+            <div style="font-size: 15px; line-height: 1.55; color: #C9D8EC;">{{ ex1Ask }}</div>
+          </div>
+          <div style="font-size: 12.5px; line-height: 1.6; color: #93A9C6; background: #0D2035; border-radius: 10px; padding: 12px 14px; white-space: pre-wrap;">{{ ex1Material }}</div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 14px; align-items: start;">
+          <!-- submissions feed -->
+          <div style="background: #0D2035; border: 1px solid rgba(140,170,210,0.12); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 10px;">
+            <div style="display: flex; align-items: baseline; gap: 10px;">
+              <div style="font-size: 12px; font-weight: 800; letter-spacing: 1px; color: #93A9C6; text-transform: uppercase;">Submissions</div>
+              <div style="font-size: 13px; color: #33E0A0; font-weight: 700;">{{ subCount }} received</div>
+              <div style="flex: 1;"></div>
+              <div style="font-size: 11px; color: #93A9C6;">tap one to spotlight</div>
+            </div>
+            <sc-for list="{{ submissions }}" as="sb" hint-placeholder-count="3">
+              <button onClick="{{ sb.spot }}" style="text-align: left; padding: 12px 14px; border-radius: 12px; border: 1px solid {{ sb.border }}; background: {{ sb.bg }}; color: #E8F0FA; font-family: inherit; cursor: pointer; display: flex; flex-direction: column; gap: 5px; animation: slideIn 0.35s ease;" style-hover="border-color: #00B8F5;">
+                <span style="font-size: 11px; font-weight: 700; color: #00B8F5;">{{ sb.name }}</span>
+                <span style="font-size: 13px; line-height: 1.5; color: #C9D8EC;">{{ sb.text }}</span>
+              </button>
+            </sc-for>
+            <sc-if value="{{ noSubs }}" hint-placeholder-val="{{ false }}">
+              <div style="border: 1px dashed rgba(140,170,210,0.3); border-radius: 12px; padding: 24px; text-align: center; font-size: 13px; color: #93A9C6;">Waiting for prompts from the room…</div>
+            </sc-if>
+          </div>
+          <!-- spotlight -->
+          <div style="background: #10263F; border: 1px solid rgba(0,184,245,0.35); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 12px; min-height: 260px;">
+            <div style="font-size: 12px; font-weight: 800; letter-spacing: 1px; color: #00B8F5; text-transform: uppercase;">Spotlight</div>
+            <sc-if value="{{ hasSpot }}" hint-placeholder-val="{{ false }}">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 13px; font-weight: 700; color: #ACEAFF;">{{ spotName }}</span>
+                <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+                  <sc-for list="{{ spotChecks }}" as="ck" hint-placeholder-count="4">
+                    <span style="padding: 3px 9px; border-radius: 999px; font-size: 10px; font-weight: 700; background: {{ ck.bg }}; color: {{ ck.color }}; border: 1px solid {{ ck.border }};">{{ ck.mark }} {{ ck.name }}</span>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="font-size: 15px; line-height: 1.6; color: #E8F0FA; background: #0D2035; border-radius: 12px; padding: 14px;">{{ spotText }}</div>
+              <div style="display: flex; gap: 10px; align-items: center;">
+                <button onClick="{{ runSpot }}" style="padding: 10px 20px; border-radius: 10px; border: none; background: #1E49E2; color: #fff; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; opacity: {{ runSpotOpacity }};" style-hover="background: #2B57F0;">{{ runSpotLabel }}</button>
+                <span style="font-size: 12px; color: #93A9C6;">claude-sonnet · live call</span>
+              </div>
+              <sc-if value="{{ spotOutVisible }}" hint-placeholder-val="{{ false }}">
+                <div style="background: #0D2035; border: 1px solid rgba(140,170,210,0.12); border-radius: 12px; padding: 14px; font-size: 13px; line-height: 1.65; color: #DCE7F5; white-space: pre-wrap; max-height: 320px; overflow: auto;">{{ spotOut }}<sc-if value="{{ spotStreaming }}" hint-placeholder-val="{{ false }}"><span style="display: inline-block; width: 8px; height: 15px; background: #00B8F5; margin-left: 2px; vertical-align: text-bottom; animation: blinkCaret 0.9s infinite;"></span></sc-if></div>
+              </sc-if>
+            </sc-if>
+            <sc-if value="{{ noSpot }}" hint-placeholder-val="{{ true }}">
+              <div style="flex: 1; border: 1px dashed rgba(140,170,210,0.3); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #93A9C6; padding: 24px; text-align: center;">Pick a submission to put it on screen and run it against Claude.</div>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ─── EXERCISE 2 ─── -->
+      <sc-if value="{{ showEx2 }}" hint-placeholder-val="{{ false }}">
+        <div style="background: #10263F; border: 1px solid rgba(140,170,210,0.16); border-radius: 14px; padding: 16px 20px; display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; gap: 20px; align-items: baseline;">
+            <div style="font-size: 11px; font-weight: 700; letter-spacing: 1px; color: #9F7BFF; text-transform: uppercase; white-space: nowrap;">{{ ex2Tag }} · The artefact</div>
+            <div style="font-size: 15px; line-height: 1.55; color: #C9D8EC;">{{ ex2Ask }}</div>
+          </div>
+          <div style="font-size: 12.5px; line-height: 1.6; color: #93A9C6; background: #0D2035; border-radius: 10px; padding: 12px 14px; white-space: pre-wrap;">{{ ex2Artifact }}</div>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; align-items: start;">
+          <sc-for list="{{ ratePrompts }}" as="rp" hint-placeholder-count="3">
+            <div style="background: #10263F; border: 1px solid {{ rp.border }}; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 12px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="padding: 3px 12px; border-radius: 999px; font-size: 11px; font-weight: 800; letter-spacing: 0.8px; background: rgba(159,123,255,0.15); color: #C9B4FF;">{{ rp.label }}</span>
+                <sc-if value="{{ rp.verdict }}" hint-placeholder-val="{{ false }}">
+                  <span style="padding: 3px 12px; border-radius: 999px; font-size: 11px; font-weight: 800; background: {{ rp.verdictBg }}; color: {{ rp.verdictColor }};">{{ rp.verdict }}</span>
+                </sc-if>
+              </div>
+              <div style="font-size: 13.5px; line-height: 1.6; color: #C9D8EC; min-height: 120px;">{{ rp.text }}</div>
+              <div style="display: flex; flex-direction: column; gap: 6px; border-top: 1px solid rgba(140,170,210,0.14); padding-top: 10px;">
+                <sc-for list="{{ rp.bars }}" as="br" hint-placeholder-count="3">
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 11px; color: #93A9C6; width: 74px; font-weight: 600;">{{ br.name }}</span>
+                    <div style="flex: 1; height: 7px; border-radius: 999px; background: rgba(140,170,210,0.15); overflow: hidden;"><div style="height: 100%; border-radius: 999px; background: {{ br.color }}; width: {{ br.pct }}; transition: width 0.4s ease;"></div></div>
+                    <span style="font-size: 11px; font-weight: 700; color: #E8F0FA; width: 20px; text-align: right;">{{ br.n }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <!-- anatomy debrief -->
+        <sc-if value="{{ revealed }}" hint-placeholder-val="{{ false }}">
+          <div style="background: #10263F; border: 1px solid rgba(51,224,160,0.35); border-radius: 16px; padding: 20px 22px; display: flex; flex-direction: column; gap: 12px; animation: slideIn 0.4s ease;">
+            <div style="font-size: 12px; font-weight: 800; letter-spacing: 1px; color: #33E0A0; text-transform: uppercase;">Anatomy of the fantastic prompt</div>
+            <div style="font-size: 14.5px; line-height: 1.8; color: #C9D8EC;">
+              <sc-for list="{{ fantSegs }}" as="seg" hint-placeholder-count="6">
+                <span title="{{ seg.tip }}" onClick="{{ seg.showTip }}" style="background: {{ seg.bg }}; box-shadow: inset 0 -2px 0 {{ seg.bd }}; border-radius: 3px; padding: 1px 3px; cursor: pointer;">{{ seg.t }} </span>
+              </sc-for>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 6px; padding-top: 6px; border-top: 1px solid rgba(140,170,210,0.14);">
+              <sc-for list="{{ legend }}" as="lg" hint-placeholder-count="6">
+                <button onClick="{{ lg.showTip }}" title="{{ lg.tip }}" style="display: flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; border: 1px solid rgba(140,170,210,0.25); background: transparent; color: #E8F0FA; font-family: inherit; font-size: 11.5px; font-weight: 600; cursor: pointer;" style-hover="border-color: rgba(172,234,255,0.5);"><span style="width: 9px; height: 9px; border-radius: 2px; background: {{ lg.color }};"></span>{{ lg.name }}</button>
+              </sc-for>
+            </div>
+            <sc-if value="{{ tipText }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size: 12.5px; color: #ACEAFF; background: rgba(0,184,245,0.08); border-radius: 8px; padding: 8px 12px;">{{ tipText }}</div>
+            </sc-if>
+          </div>
+        </sc-if>
+      </sc-if>
+
+      <!-- controls -->
+      <div style="display: flex; gap: 10px; align-items: center; background: #10263F; border: 1px solid rgba(140,170,210,0.16); border-radius: 14px; padding: 12px 16px;">
+        <button onClick="{{ primaryGo }}" style="padding: 11px 24px; border-radius: 10px; border: none; background: #1E49E2; color: #fff; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer;" style-hover="background: #2B57F0;">{{ primaryLabel }}</button>
+        <div style="flex: 1;"></div>
+        <div style="font-size: 13px; color: #93A9C6;">{{ statusLine }}</div>
+      </div>
+    </section>
+
+    <!-- ══════════ Participant phone ══════════ -->
+    <section data-screen-label="Participant phone" style="flex-shrink: 0; display: flex; flex-direction: column; gap: 10px; width: 342px;">
+      <div style="font-size: 11px; font-weight: 700; letter-spacing: 1.2px; color: #93A9C6; text-transform: uppercase; text-align: center;">Participant · own device</div>
+      <div style="width: 342px; height: 744px;">
+        <div style="transform: scale(0.85); transform-origin: top left;">
+          <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" hint-size="402px,874px">
+            <div style="height: 100%; background: #0A1B30; display: flex; flex-direction: column; font-family: 'Public Sans', system-ui, sans-serif; color: #E8F0FA; overflow: auto;">
+
+              <!-- JOIN -->
+              <sc-if value="{{ phoneJoin }}" hint-placeholder-val="{{ true }}">
+                <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 22px; padding: 0 30px 60px;">
+                  <div style="width: 46px; height: 46px; border-radius: 12px; background: #1E49E2; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; color: #fff;">PL</div>
+                  <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <div style="font-size: 26px; font-weight: 800; line-height: 1.2;">Join the Prompt Lab</div>
+                    <div style="font-size: 14px; color: #93A9C6; line-height: 1.5;">Enter the session code from the screen. No login, nothing stored.</div>
+                  </div>
+                  <div style="display: flex; gap: 10px;">
+                    <sc-for list="{{ codeDigits }}" as="d" hint-placeholder-count="4">
+                      <div style="width: 56px; height: 64px; border-radius: 12px; background: #10263F; border: 1px solid rgba(0,184,245,0.4); display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 800; color: #ACEAFF;">{{ d }}</div>
+                    </sc-for>
+                  </div>
+                  <button onClick="{{ join }}" style="padding: 16px; border-radius: 12px; border: none; background: #1E49E2; color: #fff; font-family: inherit; font-size: 16px; font-weight: 700; cursor: pointer;" style-hover="background: #2B57F0;">Join session</button>
+                  <div style="font-size: 12px; color: #FFB547; line-height: 1.5; background: rgba(255,181,71,0.1); border-radius: 10px; padding: 10px 14px;">Please don't enter client, personal or confidential data. All scenarios are synthetic.</div>
+                </div>
+              </sc-if>
+
+              <!-- LOBBY -->
+              <sc-if value="{{ phoneLobby }}" hint-placeholder-val="{{ false }}">
+                <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 16px; padding: 0 30px 60px; text-align: center;">
+                  <span style="width: 10px; height: 10px; border-radius: 50%; background: #33E0A0; animation: pulseDot 2s infinite;"></span>
+                  <div style="font-size: 22px; font-weight: 800;">You're in</div>
+                  <div style="font-size: 14px; color: #93A9C6; line-height: 1.6;">Two hands-on exercises coming up. Keep an eye on the main screen — this page moves with the session.</div>
+                </div>
+              </sc-if>
+
+              <!-- EX1 WRITE -->
+              <sc-if value="{{ phoneWrite }}" hint-placeholder-val="{{ false }}">
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 10px; padding: 68px 20px 40px;">
+                  <div style="font-size: 11px; font-weight: 800; letter-spacing: 1px; color: #00B8F5;">EXERCISE {{ ex1Tag }}</div>
+                  <div style="font-size: 19px; font-weight: 800; line-height: 1.3;">{{ ex1Name }}</div>
+                  <div style="font-size: 13px; color: #C9D8EC; line-height: 1.55; background: #10263F; border-radius: 10px; padding: 10px 12px;">{{ ex1Ask }}</div>
+                  <textarea value="{{ myText }}" onChange="{{ onMyText }}" placeholder="Write the prompt you'd give an AI assistant…" style="min-height: 150px; border-radius: 12px; border: 1px solid rgba(140,170,210,0.3); background: #10263F; color: #E8F0FA; font-family: inherit; font-size: 14px; line-height: 1.5; padding: 12px; resize: vertical; outline: none; box-sizing: border-box; width: 100%;"></textarea>
+                  <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                    <sc-for list="{{ myChecks }}" as="ck" hint-placeholder-count="4">
+                      <span style="padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; background: {{ ck.bg }}; color: {{ ck.color }}; border: 1px solid {{ ck.border }};">{{ ck.mark }} {{ ck.name }}</span>
+                    </sc-for>
+                  </div>
+                  <div style="font-size: 11.5px; color: #93A9C6;">Instant check — does your prompt give the AI a role, context, a format and constraints?</div>
+                  <button onClick="{{ submitMine }}" style="padding: 15px; border-radius: 12px; border: none; background: #1E49E2; color: #fff; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer; opacity: {{ submitOpacity }};" style-hover="background: #2B57F0;">Submit to the screen</button>
+                </div>
+              </sc-if>
+
+              <!-- EX1 SUBMITTED -->
+              <sc-if value="{{ phoneSubmitted }}" hint-placeholder-val="{{ false }}">
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 14px; padding: 68px 20px 40px;">
+                  <div style="font-size: 22px; font-weight: 800; padding-top: 20px;">Submitted ✓</div>
+                  <div style="font-size: 14px; color: #93A9C6; line-height: 1.6;">Your prompt is in the pool — the facilitator may put it on the big screen.</div>
+                  <div style="border-top: 1px solid rgba(140,170,210,0.14); padding-top: 14px; display: flex; flex-direction: column; gap: 10px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <div style="font-size: 15px; font-weight: 800;">Run it yourself</div>
+                      <div style="flex: 1;"></div>
+                      <div style="font-size: 12px; color: #93A9C6; font-weight: 600;">{{ runsLeft }} runs left</div>
+                    </div>
+                    <button onClick="{{ runMine }}" style="padding: 13px; border-radius: 12px; border: 1px solid rgba(0,184,245,0.5); background: transparent; color: #ACEAFF; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; opacity: {{ runMineOpacity }};" style-hover="background: rgba(0,184,245,0.1);">{{ runMineLabel }}</button>
+                    <sc-if value="{{ myOut }}" hint-placeholder-val="{{ false }}">
+                      <div style="background: #0D2035; border: 1px solid rgba(140,170,210,0.15); border-radius: 12px; padding: 14px; font-size: 13px; line-height: 1.6; color: #DCE7F5; white-space: pre-wrap;">{{ myOut }}</div>
+                    </sc-if>
+                    <button onClick="{{ editMine }}" style="padding: 10px; border-radius: 10px; border: none; background: transparent; color: #00B8F5; font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer;">‹ Edit my prompt</button>
+                  </div>
+                </div>
+              </sc-if>
+
+              <!-- EX2 RATE -->
+              <sc-if value="{{ phoneRate }}" hint-placeholder-val="{{ false }}">
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 12px; padding: 68px 20px 40px;">
+                  <div style="font-size: 11px; font-weight: 800; letter-spacing: 1px; color: #9F7BFF;">EXERCISE {{ ex2Tag }}</div>
+                  <div style="font-size: 19px; font-weight: 800; line-height: 1.3;">{{ ex2Name }}</div>
+                  <div style="font-size: 13px; color: #93A9C6; line-height: 1.5;">Same task, three prompts. How good is each?</div>
+                  <sc-for list="{{ rateCards }}" as="rc" hint-placeholder-count="3">
+                    <div style="background: #10263F; border: 1px solid rgba(140,170,210,0.2); border-radius: 14px; padding: 13px; display: flex; flex-direction: column; gap: 9px;">
+                      <span style="font-size: 11px; font-weight: 800; letter-spacing: 1px; color: #C9B4FF;">{{ rc.label }}</span>
+                      <span style="font-size: 12.5px; line-height: 1.5; color: #C9D8EC;">{{ rc.text }}</span>
+                      <div style="display: flex; gap: 6px;">
+                        <sc-for list="{{ rc.opts }}" as="op" hint-placeholder-count="3">
+                          <button onClick="{{ op.pick }}" style="flex: 1; padding: 8px 4px; border-radius: 9px; border: 1px solid {{ op.border }}; background: {{ op.bg }}; color: {{ op.color }}; font-family: inherit; font-size: 11px; font-weight: 700; cursor: pointer;">{{ op.name }}</button>
+                        </sc-for>
+                      </div>
+                    </div>
+                  </sc-for>
+                  <button onClick="{{ submitRatings }}" style="padding: 15px; border-radius: 12px; border: none; background: #1E49E2; color: #fff; font-family: inherit; font-size: 15px; font-weight: 700; cursor: pointer; opacity: {{ ratingsOpacity }};" style-hover="background: #2B57F0;">Submit ratings</button>
+                </div>
+              </sc-if>
+
+              <!-- EX2 DONE / TAKEAWAY -->
+              <sc-if value="{{ phoneDone }}" hint-placeholder-val="{{ false }}">
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 14px; padding: 68px 22px 40px;">
+                  <div style="font-size: 22px; font-weight: 800; padding-top: 16px;">{{ doneTitle }}</div>
+                  <div style="font-size: 13.5px; color: #93A9C6; line-height: 1.6;">{{ doneBody }}</div>
+                  <sc-if value="{{ showTakeaway }}" hint-placeholder-val="{{ false }}">
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                      <div style="font-size: 12px; font-weight: 800; letter-spacing: 1px; color: #33E0A0; text-transform: uppercase;">Your takeaway — a fantastic prompt has:</div>
+                      <sc-for list="{{ legend }}" as="lg" hint-placeholder-count="6">
+                        <div style="display: flex; gap: 10px; align-items: baseline; background: #10263F; border-radius: 10px; padding: 10px 12px;">
+                          <span style="width: 9px; height: 9px; border-radius: 2px; background: {{ lg.color }}; flex-shrink: 0; position: relative; top: 1px;"></span>
+                          <div style="display: flex; flex-direction: column; gap: 2px;">
+                            <span style="font-size: 13px; font-weight: 700;">{{ lg.name }}</span>
+                            <span style="font-size: 12px; color: #93A9C6; line-height: 1.45;">{{ lg.short }}</span>
+                          </div>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-if>
+
+            </div>
+          </x-import>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Little car -->
+  <div ref="{{ carRef }}" style="position: fixed; bottom: 4px; left: 0; z-index: 30; pointer-events: none; will-change: transform; transform: translateX(-300px); width: 74px; height: 30px;">
+    <div style="position: absolute; bottom: 7px; left: 0; width: 74px; height: 15px; border-radius: 8px 10px 4px 8px; background: linear-gradient(180deg, #00B8F5, #0077C8); box-shadow: 0 0 14px rgba(0,184,245,0.45);"></div>
+    <div style="position: absolute; bottom: 18px; left: 16px; width: 36px; height: 12px; border-radius: 7px 8px 0 0; background: #0D2035; border: 1px solid rgba(172,234,255,0.5); border-bottom: none;"></div>
+    <div style="position: absolute; bottom: 20px; left: 20px; width: 12px; height: 8px; border-radius: 3px; background: rgba(172,234,255,0.75);"></div>
+    <div style="position: absolute; bottom: 20px; left: 36px; width: 12px; height: 8px; border-radius: 3px; background: rgba(172,234,255,0.55);"></div>
+    <div style="position: absolute; bottom: 12px; left: -2px; width: 5px; height: 5px; border-radius: 50%; background: #FFE9A8; box-shadow: -6px 0 12px 3px rgba(255,233,168,0.35);"></div>
+    <div style="position: absolute; bottom: 12px; right: -1px; width: 4px; height: 5px; border-radius: 50%; background: #FF7A90; box-shadow: 4px 0 8px 2px rgba(255,122,144,0.35);"></div>
+    <div style="position: absolute; bottom: 0; left: 11px; width: 13px; height: 13px; border-radius: 50%; background: #081527; border: 2px solid #2B4668; box-sizing: border-box; display: flex; align-items: center; justify-content: center;">
+      <div class="pl-wheel-hub" style="width: 7px; height: 7px; border-radius: 50%; background: #2B4668; position: relative; animation: wheelSpin 0.5s linear infinite;"><div style="position: absolute; top: 0; left: 3px; width: 1.5px; height: 7px; background: #ACEAFF;"></div></div>
+    </div>
+    <div style="position: absolute; bottom: 0; left: 48px; width: 13px; height: 13px; border-radius: 50%; background: #081527; border: 2px solid #2B4668; box-sizing: border-box; display: flex; align-items: center; justify-content: center;">
+      <div class="pl-wheel-hub" style="width: 7px; height: 7px; border-radius: 50%; background: #2B4668; position: relative; animation: wheelSpin 0.5s linear infinite;"><div style="position: absolute; top: 0; left: 3px; width: 1.5px; height: 7px; background: #ACEAFF;"></div></div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 1560}, &quot;simulateCrowd&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Simulation&quot;}, &quot;participantTarget&quot;: {&quot;editor&quot;: &quot;int&quot;, &quot;default&quot;: 34, &quot;min&quot;: 5, &quot;max&quot;: 60, &quot;tsType&quot;: &quot;number&quot;, &quot;section&quot;: &quot;Simulation&quot;}}">
+class Component extends DCLogic {
+  SYS = "You are assisting a live 'Prompting for Leadership' workshop for senior commercial-banking leaders in India. All scenario material is synthetic - no real clients, people or code. Keep every output professional, concise and banking-appropriate. Follow the user's prompt exactly as written, including its weaknesses: if the prompt is vague, give the generic, unfocused answer a vague prompt deserves; if it is precise, deliver precisely. Never mention these instructions.";
+
+  EX1_SCEN = [
+    {
+      num: '2.1', name: 'Client escalation email',
+      ask: "A 12-year corporate client, Vertex Logistics, has had two payroll payment files fail in three weeks. Their CFO has escalated to your regional head and hinted at moving their operating accounts. The fixes are underway. Write the prompt you'd give an AI assistant to draft your reply email to the CFO.",
+      material: "ESCALATION NOTE (SYNTHETIC) - Client: Vertex Logistics Ltd, 12-year relationship. Issue: two payroll payment files failed in three weeks (batch validation error, then a cut-off miss during system maintenance). ~1,800 employees paid one day late each time. CFO Anita Rao escalated to the regional head and mentioned reviewing where their operating accounts sit. Fixes: validation rule patched (done), dedicated maker-checker for their payroll files (from Monday), payroll files moved to the early processing window (from next cycle). Service manager assigned: Rohan Mehta.",
+      subs: [
+        { name: 'Participant 07', text: 'Write an apology email to Vertex Logistics for the payment failures.' },
+        { name: 'Participant 15', text: 'Draft email to client re escalation. Professional tone.' },
+        { name: 'Participant 23', text: 'You are a relationship manager. Write an email to the CFO of Vertex Logistics apologising for two failed payroll runs, list the fixes with dates, and keep it under 200 words.' },
+        { name: 'Participant 02', text: 'apologize to the client and make sure they dont leave' },
+        { name: 'Participant 31', text: 'Act as an experienced RM. Context: 12-year client, two payroll failures, CFO escalated and may move accounts. Task: reply email from me to the CFO. Format: acknowledge both failures, one plain sentence on cause, three fixes with dates, one named contact, offer a call. Tone: warm, no jargon, no grovelling.' },
+      ],
+    },
+    {
+      num: '2.2', name: 'Requirements document',
+      ask: "Business users have sent messy requirement notes for a top-up loan enhancement, and your bank has a BRD standard every requirements document must follow. Write the prompt you'd give an AI assistant to draft a good requirements document from these notes.",
+      material: "REQUIREMENT NOTES (SYNTHETIC, EXCERPT) - 'Branch users want faster approval for top-up loans. If existing customer >2 yrs vintage, skip income docs (but compliance said only below 5 lakh?). Need dashboard for pending apps - business wants email alerts too. Bureau pull should be cached 30 days (risk team to confirm). Out of scope: NRI customers (maybe phase 2). Auto-reject if score below 650 unless RM override (needs approval matrix).'\n\nBRD STANDARD (EXCERPT) - Required sections: Objective; In/out of scope; Functional requirements numbered FR-xx, each testable with acceptance criteria; Non-functional requirements; Dependencies; Open questions. Ambiguities must be logged, never resolved by the author.",
+      subs: [
+        { name: 'Participant 11', text: 'Convert these notes into a BRD.' },
+        { name: 'Participant 04', text: 'summarise the requirements and make a document' },
+        { name: 'Participant 19', text: 'Draft a requirements doc for the top-up loan enhancement. Include scope, functional requirements and open questions. Keep it under two pages.' },
+        { name: 'Participant 26', text: 'You are a senior business analyst. Turn the notes below into a BRD that follows our standard sections exactly. Number requirements FR-01 onwards, each testable with acceptance criteria. Where the notes are ambiguous or conflicting, list the item under open questions - do not resolve it yourself.' },
+      ],
+    },
+    {
+      num: '2.3', name: 'Legacy code modernisation',
+      ask: "A 20-year-old undocumented batch routine in your EOD interest-accrual chain needs to move to a modern service. The original author has left. Write the prompt you'd give an AI assistant to summarise it and propose a modernisation plan — precise enough to surface the hidden business rules.",
+      material: "LEGACY ROUTINE (SYNTHETIC, EXCERPT)\nPROC ACCR-EOD:\n  READ MASTER-ACCT WHERE STATUS NOT 'C'.\n  IF PROD-CODE = 'TL' OR 'WC' COMPUTE INT = BAL * RATE / 365.\n  IF DAYS-LATE > 0 AND DAYS-LATE < 3 MOVE 0 TO PENAL-INT.   (no comment)\n  IF BRANCH-ID = '019' PERFORM SPECIAL-ROUND.               (undocumented)\n  ON ERROR GOTO SKIP-REC.                                   (record silently dropped)\n  WRITE ACCR-FILE.                                          (no audit log)\nCalled nightly by JCL step 7 — and, apparently, by a month-end job nobody owns.",
+      subs: [
+        { name: 'Participant 09', text: 'Explain what this code does.' },
+        { name: 'Participant 14', text: 'Rewrite this legacy code in Java.' },
+        { name: 'Participant 27', text: 'Summarise the routine and list any business rules embedded in it. Mention anything suspicious like silent error handling.' },
+        { name: 'Participant 33', text: 'Act as a modernisation architect who has migrated core-banking batch systems. Summarise this routine in plain English, list inputs/outputs and side effects, extract every hidden business rule with a line reference, flag migration risks, and propose a target service design. Do not assume anything the code does not state; if logic looks unreachable or contradictory, say so.' },
+      ],
+    },
+  ];
+
+  EX2_SCEN = [
+    {
+      num: '3.1', name: 'Credit memo summary',
+      ask: 'Summarise the credit memo below for a risk committee pre-read. Which of these three prompts would you trust with it?',
+      artifact: 'CREDIT MEMO (SYNTHETIC) - Meridian Textiles Pvt Ltd. Facility: INR 85 Cr working-capital limit, renewal + INR 20 Cr enhancement requested. FY25 revenue INR 412 Cr (+9% YoY), EBITDA margin 11.2% (down from 13.1%), interest cover 2.4x. 62% of revenue from two group-linked buyers in the UAE. Receivable days up from 68 to 94. Collateral: industrial property (FY23 valuation INR 64 Cr), personal guarantees of both promoters. Audit note flags related-party sales ~8% above market. New EU sustainability rules may affect 30% of export volumes from Q3.',
+      prompts: [
+        { label: 'Prompt A', tier: 'okay', text: 'Summarise this credit memo in five bullet points for a risk committee. Highlight the key risks and end with a recommendation.' },
+        { label: 'Prompt B', tier: 'bad', text: 'Summarise this credit memo.' },
+        { label: 'Prompt C', tier: 'fant', text: 'You are a senior credit risk analyst. The risk committee will have three minutes to read your pre-read. Summarise the memo as: 1) Exposure snapshot, 2) Top three risks ranked, 3) Mitigants, 4) Recommendation, 5) One open question. Under 180 words, neutral tone; where data is stale, say so - do not guess. Phrase risks concretely, e.g. "Concentration: 62% of revenue from two buyers."' },
+      ],
+      segs: [
+        { k: 'role', t: 'You are a senior credit risk analyst.' },
+        { k: 'context', t: 'The risk committee will have three minutes to read your pre-read.' },
+        { k: 'task', t: 'Summarise the memo' },
+        { k: 'format', t: 'as: 1) Exposure snapshot, 2) Top three risks ranked, 3) Mitigants, 4) Recommendation, 5) One open question.' },
+        { k: 'constraints', t: 'Under 180 words, neutral tone; where data is stale, say so - do not guess.' },
+        { k: 'examples', t: 'Phrase risks concretely, e.g. "Concentration: 62% of revenue from two buyers."' },
+      ],
+    },
+    {
+      num: '3.2', name: 'Requirements summary',
+      ask: 'Turn messy business requirement notes into a proper BRD. Which prompt gets you a document you could actually circulate?',
+      artifact: "REQUIREMENT NOTES (SYNTHETIC, EXCERPT) - 'Branch users want faster approval for top-up loans. If existing customer >2 yrs vintage, skip income docs (but compliance said only below 5 lakh?). Bureau pull cached 30 days (risk to confirm). Out of scope: NRI customers (maybe phase 2). Auto-reject if score below 650 unless RM override.' BRD STANDARD - numbered FR-xx requirements with acceptance criteria; ambiguities logged, never resolved by the author.",
+      prompts: [
+        { label: 'Prompt A', tier: 'bad', text: 'Summarise these requirements.' },
+        { label: 'Prompt B', tier: 'fant', text: 'You are a senior business analyst in a lending technology team. These notes will become a BRD reviewed by architecture and compliance, and must follow the BRD standard provided. Draft the BRD as: 1) Objective, 2) In/out of scope, 3) Functional requirements numbered FR-01… each with acceptance criteria, 4) NFRs, 5) Dependencies, 6) Open questions. Do not invent or resolve anything - ambiguous or conflicting notes go under open questions. Write requirements testably, e.g. "FR-03: The system shall auto-flag applications where bureau score < 650."' },
+        { label: 'Prompt C', tier: 'okay', text: 'Turn these notes into a structured requirements document with sections for scope, functional requirements and open questions. Keep it under two pages.' },
+      ],
+      segs: [
+        { k: 'role', t: 'You are a senior business analyst in a lending technology team.' },
+        { k: 'context', t: 'These notes will become a BRD reviewed by architecture and compliance, and must follow the BRD standard provided.' },
+        { k: 'task', t: 'Draft the BRD' },
+        { k: 'format', t: 'as: 1) Objective, 2) In/out of scope, 3) Functional requirements numbered FR-01… each with acceptance criteria, 4) NFRs, 5) Dependencies, 6) Open questions.' },
+        { k: 'constraints', t: 'Do not invent or resolve anything - ambiguous or conflicting notes go under open questions.' },
+        { k: 'examples', t: 'Write requirements testably, e.g. "FR-03: The system shall auto-flag applications where bureau score < 650."' },
+      ],
+    },
+    {
+      num: '3.3', name: 'Code modernisation',
+      ask: 'Brief the modernisation of an undocumented legacy batch routine. Which prompt would surface the hidden business rules?',
+      artifact: "LEGACY ROUTINE (SYNTHETIC, EXCERPT) - PROC ACCR-EOD: reads active accounts; computes daily interest for TL/WC products; silently waives penal interest when DAYS-LATE < 3; branch '019' gets an undocumented SPECIAL-ROUND; errors GOTO SKIP-REC with the record silently dropped; writes ACCR-FILE with no audit log. Called nightly - and by a month-end job nobody owns.",
+      prompts: [
+        { label: 'Prompt A', tier: 'okay', text: 'Summarise what this legacy batch routine does and suggest how to modernise it as a Java service.' },
+        { label: 'Prompt B', tier: 'fant', text: 'You are a modernisation architect who has migrated core-banking batch systems. This 20-year-old routine sits in our EOD interest-accrual chain; the author has left and we plan a move to a Java microservice. Produce a modernisation brief: 1) Plain-English summary, 2) Inputs/outputs and side effects, 3) Hidden business rules, each with a line reference, 4) Migration risks, 5) Target design. Flag anything the code implies but never states - do not assume standard behaviour. Quote evidence, e.g. "Rule: penal interest waived when DAYS-LATE < 3 (line 4)."' },
+        { label: 'Prompt C', tier: 'bad', text: 'Explain this code.' },
+      ],
+      segs: [
+        { k: 'role', t: 'You are a modernisation architect who has migrated core-banking batch systems.' },
+        { k: 'context', t: 'This 20-year-old routine sits in our EOD interest-accrual chain; the author has left and we plan a move to a Java microservice.' },
+        { k: 'task', t: 'Produce a modernisation brief:' },
+        { k: 'format', t: '1) Plain-English summary, 2) Inputs/outputs and side effects, 3) Hidden business rules, each with a line reference, 4) Migration risks, 5) Target design.' },
+        { k: 'constraints', t: 'Flag anything the code implies but never states - do not assume standard behaviour.' },
+        { k: 'examples', t: 'Quote evidence, e.g. "Rule: penal interest waived when DAYS-LATE < 3 (line 4)."' },
+      ],
+    },
+  ];
+
+  VERDICTS = { bad: ['Not so good', 'rgba(255,122,144,0.18)', '#FF9DAD'], okay: ['Okay', 'rgba(255,181,71,0.18)', '#FFCB7A'], fant: ['Fantastic', 'rgba(51,224,160,0.18)', '#7FF0C4'] };
+  TIER_TARGETS = { bad: { not: 25, ok: 5, fa: 1 }, okay: { not: 6, ok: 19, fa: 6 }, fant: { not: 1, ok: 6, fa: 24 } };
+
+  COLORS = { role: '#00B8F5', context: '#9F7BFF', task: '#63E6BE', format: '#FFB547', constraints: '#FF7A90', examples: '#ACEAFF' };
+  LEGEND = [
+    { k: 'role', name: 'Role', tip: 'Role - who the model should be; sets expertise and voice.', short: 'Who should the AI be? An analyst, an RM, an architect.' },
+    { k: 'context', name: 'Context', tip: 'Context - the situation and audience it needs to know about.', short: 'The situation, the audience, what they already know.' },
+    { k: 'task', name: 'Task', tip: 'Task - the specific job to do.', short: 'One clear, specific job.' },
+    { k: 'format', name: 'Format', tip: 'Format - exactly how the answer should be structured.', short: 'The exact structure you want back.' },
+    { k: 'constraints', name: 'Constraints / Tone', tip: 'Constraints & tone - length, register, and what to avoid.', short: 'Length, tone, and what to avoid.' },
+    { k: 'examples', name: 'Examples', tip: 'Examples - a sample of the standard you expect.', short: 'Show a sample of the standard you expect.' },
+  ];
+
+  state = {
+    phase: 'lobby', ex1Idx: 0, ex2Idx: 0, menuOpen: null,
+    revealed: false, tipKey: null,
+    participants: 3,
+    subs: [], spotIdx: null, spotOut: '', spotShown: 0, spotBusy: false, spotHasRun: false,
+    ratings: [{ not: 0, ok: 0, fa: 0 }, { not: 0, ok: 0, fa: 0 }, { not: 0, ok: 0, fa: 0 }],
+    joined: false, myText: '', mySubmitted: false, myOut: '', myRuns: 0, myBusy: false,
+    myRatings: [null, null, null], myRated: false,
+  };
+
+  componentDidMount() {
+    this.startCar();
+    if (this.props.simulateCrowd === false) return;
+    const target = this.props.participantTarget ?? 34;
+    this._popTimer = setInterval(() => {
+      this.setState(s => s.participants >= target ? null : { participants: s.participants + Math.ceil(Math.random() * 3) });
+    }, 1400);
+  }
+  componentWillUnmount() {
+    [this._popTimer, this._subTimer, this._rateTimer, this._typeTimer, this._carTimer].forEach(t => t && clearInterval(t));
+    if (this._carRaf) cancelAnimationFrame(this._carRaf);
+  }
+
+  startCar() {
+    const run = () => {
+      const el = this._carEl;
+      if (!el) return;
+      if (this._carRaf) cancelAnimationFrame(this._carRaf);
+      const W = window.innerWidth;
+      let x = W + 120;
+      let reversing = false;
+      let reverseEnd = 0;
+      let nextReverseAt = W * (0.35 + Math.random() * 0.35);
+      let last = performance.now();
+      const speed = 170;
+      const step = (now) => {
+        const dt = Math.min(0.05, (now - last) / 1000); last = now;
+        if (!reversing && x < nextReverseAt && x > 160) {
+          reversing = true;
+          reverseEnd = now + 500 + Math.random() * 800;
+          nextReverseAt = x - (250 + Math.random() * 400);
+        }
+        if (reversing && now > reverseEnd) reversing = false;
+        x += (reversing ? speed * 0.6 : -speed) * dt;
+        el.style.transform = 'translateX(' + x + 'px)';
+        el.querySelectorAll('.pl-wheel-hub').forEach(h => { h.style.animationDirection = reversing ? 'reverse' : 'normal'; });
+        if (x > -160) this._carRaf = requestAnimationFrame(step);
+      };
+      this._carRaf = requestAnimationFrame(step);
+    };
+    setTimeout(run, 1500);
+    this._carTimer = setInterval(run, 15000);
+  }
+
+  checksFor(text) {
+    const t = (text || '').toLowerCase();
+    const has = {
+      Role: /you are|act as|as a |you're a/.test(t),
+      Context: t.length > 120 && /(client|cfo|committee|audience|year|context|standard|legacy|author|review)/.test(t),
+      Format: /(bullet|structure|format|list|section|numbered|\d\))/.test(t),
+      Constraints: /(under \d|words|tone|avoid|jargon|neutral|warm|concise|do not|don't|pages)/.test(t),
+    };
+    return Object.entries(has).map(([name, ok]) => ({
+      name, mark: ok ? '✓' : '·',
+      bg: ok ? 'rgba(51,224,160,0.12)' : 'rgba(140,170,210,0.08)',
+      color: ok ? '#7FF0C4' : '#93A9C6',
+      border: ok ? 'rgba(51,224,160,0.4)' : 'rgba(140,170,210,0.2)',
+    }));
+  }
+
+  async callClaude(promptText, artifact) {
+    const body = { messages: [{ role: 'user', content: promptText + '\n\n---\nREFERENCE MATERIAL (synthetic):\n' + artifact }], system: this.SYS, max_tokens: 700 };
+    try { return await window.claude.complete({ ...body, model: 'claude-sonnet-4-5' }); }
+    catch (e1) {
+      try { return await window.claude.complete(body); }
+      catch (e2) { return '[Could not reach Claude: ' + (e2 && e2.message || e2) + ']'; }
+    }
+  }
+
+  startTypewriter(fullLen) {
+    clearInterval(this._typeTimer);
+    this._typeTimer = setInterval(() => {
+      this.setState(s => {
+        if (s.spotShown >= fullLen) { clearInterval(this._typeTimer); return { spotBusy: false }; }
+        return { spotShown: s.spotShown + 11 };
+      });
+    }, 28);
+  }
+
+  goPhase(phase, idx) {
+    clearInterval(this._subTimer); clearInterval(this._rateTimer); clearInterval(this._typeTimer);
+    const patch = { phase, menuOpen: null, revealed: false, tipKey: null };
+    if (phase === 'ex1') {
+      Object.assign(patch, { ex1Idx: idx, subs: [], spotIdx: null, spotOut: '', spotShown: 0, spotBusy: false, spotHasRun: false, myText: '', mySubmitted: false, myOut: '', myRuns: 0 });
+    }
+    if (phase === 'ex2') {
+      Object.assign(patch, { ex2Idx: idx, ratings: [{ not: 0, ok: 0, fa: 0 }, { not: 0, ok: 0, fa: 0 }, { not: 0, ok: 0, fa: 0 }], myRatings: [null, null, null], myRated: false });
+    }
+    this.setState(patch);
+    if (this.props.simulateCrowd === false) return;
+    if (phase === 'ex1') {
+      const list = this.EX1_SCEN[idx].subs;
+      let i = 0;
+      this._subTimer = setInterval(() => {
+        if (i >= list.length) { clearInterval(this._subTimer); return; }
+        const sub = list[i++];
+        this.setState(s => ({ subs: [...s.subs, sub] }));
+      }, 2600);
+    }
+    if (phase === 'ex2') {
+      const targets = this.EX2_SCEN[idx].prompts.map(p => this.TIER_TARGETS[p.tier]);
+      this._rateTimer = setInterval(() => {
+        this.setState(s => {
+          const next = s.ratings.map(r => ({ ...r }));
+          let moved = false;
+          next.forEach((r, i) => {
+            for (const k of ['not', 'ok', 'fa']) {
+              if (r[k] < targets[i][k] && Math.random() < 0.5) { r[k]++; moved = true; }
+            }
+          });
+          if (!moved) { clearInterval(this._rateTimer); return null; }
+          return { ratings: next };
+        });
+      }, 450);
+    }
+  }
+
+  renderVals() {
+    const s = this.state;
+    const scen1 = this.EX1_SCEN[s.ex1Idx];
+    const scen2 = this.EX2_SCEN[s.ex2Idx];
+
+    const pill = (active) => ({
+      bg: active ? '#1E49E2' : 'transparent',
+      color: active ? '#fff' : '#93A9C6',
+      border: active ? '#1E49E2' : 'rgba(140,170,210,0.3)',
+    });
+    const lobbyP = pill(s.phase === 'lobby'), ex1P = pill(s.phase === 'ex1'), ex2P = pill(s.phase === 'ex2');
+
+    const ex1Items = this.EX1_SCEN.map((sc, i) => ({
+      num: sc.num, name: sc.name,
+      bg: s.phase === 'ex1' && s.ex1Idx === i ? 'rgba(0,184,245,0.12)' : 'transparent',
+      color: s.phase === 'ex1' && s.ex1Idx === i ? '#ACEAFF' : '#C9D8EC',
+      go: () => this.goPhase('ex1', i),
+    }));
+    const ex2Items = this.EX2_SCEN.map((sc, i) => ({
+      num: sc.num, name: sc.name,
+      bg: s.phase === 'ex2' && s.ex2Idx === i ? 'rgba(159,123,255,0.15)' : 'transparent',
+      color: s.phase === 'ex2' && s.ex2Idx === i ? '#C9B4FF' : '#C9D8EC',
+      go: () => this.goPhase('ex2', i),
+    }));
+
+    let primaryLabel, primaryGo, statusLine;
+    if (s.phase === 'lobby') {
+      primaryLabel = 'Start Exercise 2.1 →'; primaryGo = () => this.goPhase('ex1', 0);
+      statusLine = 'Waiting for the room to join';
+    } else if (s.phase === 'ex1') {
+      if (s.ex1Idx < 2) { primaryLabel = 'Next: ' + this.EX1_SCEN[s.ex1Idx + 1].num + ' ' + this.EX1_SCEN[s.ex1Idx + 1].name + ' →'; primaryGo = () => this.goPhase('ex1', s.ex1Idx + 1); }
+      else { primaryLabel = 'Start Exercise 3.1 →'; primaryGo = () => this.goPhase('ex2', 0); }
+      statusLine = (s.subs.length + (s.mySubmitted ? 1 : 0)) + ' prompts submitted';
+    } else if (!s.revealed) {
+      primaryLabel = 'Reveal & debrief'; primaryGo = () => this.setState({ revealed: true });
+      const total = s.ratings.reduce((a, r) => a + r.not + r.ok + r.fa, 0) + (s.myRated ? 3 : 0);
+      statusLine = total + ' ratings received';
+    } else {
+      if (s.ex2Idx < 2) { primaryLabel = 'Next: ' + this.EX2_SCEN[s.ex2Idx + 1].num + ' ' + this.EX2_SCEN[s.ex2Idx + 1].name + ' →'; primaryGo = () => this.goPhase('ex2', s.ex2Idx + 1); }
+      else { primaryLabel = 'Back to lobby'; primaryGo = () => this.goPhase('lobby'); }
+      statusLine = 'Debrief — tap the highlights to explain each component';
+    }
+
+    const allSubs = s.mySubmitted ? [...s.subs, { name: 'You (this phone)', text: s.myText }] : s.subs;
+    const spot = s.spotIdx != null ? allSubs[s.spotIdx] : null;
+    const submissions = allSubs.map((sb, i) => ({
+      name: sb.name, text: sb.text,
+      border: s.spotIdx === i ? '#00B8F5' : 'rgba(140,170,210,0.18)',
+      bg: s.spotIdx === i ? 'rgba(0,184,245,0.08)' : '#10263F',
+      spot: () => { clearInterval(this._typeTimer); this.setState({ spotIdx: i, spotOut: '', spotShown: 0, spotBusy: false, spotHasRun: false }); },
+    }));
+
+    const runSpot = async () => {
+      if (!spot || s.spotBusy) return;
+      this.setState({ spotBusy: true, spotOut: '', spotShown: 0, spotHasRun: true });
+      const out = await this.callClaude(spot.text, scen1.material);
+      this.setState({ spotOut: out, spotShown: 0 });
+      this.startTypewriter(out.length);
+    };
+
+    const ratePrompts = scen2.prompts.map((p, i) => {
+      const r = s.ratings[i];
+      const mine = s.myRated && s.myRatings[i] != null ? s.myRatings[i] : null;
+      const counts = { not: r.not + (mine === 'not' ? 1 : 0), ok: r.ok + (mine === 'ok' ? 1 : 0), fa: r.fa + (mine === 'fa' ? 1 : 0) };
+      const max = Math.max(1, counts.not, counts.ok, counts.fa);
+      const v = s.revealed ? this.VERDICTS[p.tier] : null;
+      return {
+        label: p.label, text: p.text,
+        border: s.revealed && p.tier === 'fant' ? 'rgba(51,224,160,0.5)' : 'rgba(140,170,210,0.16)',
+        verdict: v ? v[0] : null, verdictBg: v ? v[1] : null, verdictColor: v ? v[2] : null,
+        bars: [
+          { name: 'Not so good', color: '#FF7A90', n: counts.not, pct: Math.round(counts.not / max * 100) + '%' },
+          { name: 'Okay', color: '#FFB547', n: counts.ok, pct: Math.round(counts.ok / max * 100) + '%' },
+          { name: 'Fantastic', color: '#33E0A0', n: counts.fa, pct: Math.round(counts.fa / max * 100) + '%' },
+        ],
+      };
+    });
+
+    const fantSegs = scen2.segs.map(seg => ({
+      t: seg.t,
+      tip: this.LEGEND.find(l => l.k === seg.k).tip,
+      bg: this.COLORS[seg.k] + '2E',
+      bd: this.COLORS[seg.k],
+      showTip: () => this.setState({ tipKey: seg.k }),
+    }));
+    const legend = this.LEGEND.map(lg => ({
+      name: lg.name, tip: lg.tip, short: lg.short, color: this.COLORS[lg.k],
+      showTip: () => this.setState({ tipKey: lg.k }),
+    }));
+    const tipObj = s.tipKey ? this.LEGEND.find(l => l.k === s.tipKey) : null;
+
+    const phoneJoin = !s.joined;
+    const phoneLobby = s.joined && s.phase === 'lobby';
+    const phoneWrite = s.joined && s.phase === 'ex1' && !s.mySubmitted;
+    const phoneSubmitted = s.joined && s.phase === 'ex1' && s.mySubmitted;
+    const phoneRate = s.joined && s.phase === 'ex2' && !s.myRated && !s.revealed;
+    const phoneDone = s.joined && s.phase === 'ex2' && (s.myRated || s.revealed);
+
+    const rateCards = scen2.prompts.map((p, i) => ({
+      label: p.label, text: p.text,
+      opts: [['not', 'Not so good', '#FF7A90'], ['ok', 'Okay', '#FFB547'], ['fa', 'Fantastic', '#33E0A0']].map(([key, name, color]) => ({
+        name,
+        pick: () => this.setState(st => { const mr = [...st.myRatings]; mr[i] = key; return { myRatings: mr }; }),
+        bg: s.myRatings[i] === key ? color + '26' : 'transparent',
+        color: s.myRatings[i] === key ? color : '#93A9C6',
+        border: s.myRatings[i] === key ? color : 'rgba(140,170,210,0.3)',
+      })),
+    }));
+    const allRated = s.myRatings.every(r => r != null);
+
+    const runMine = async () => {
+      if (s.myBusy || s.myRuns >= 3) return;
+      this.setState({ myBusy: true, myOut: '' });
+      const out = await this.callClaude(s.myText, scen1.material);
+      this.setState(st => ({ myOut: out, myBusy: false, myRuns: st.myRuns + 1 }));
+    };
+
+    return {
+      participants: s.participants,
+      codeDigits: ['4', '2', '7', '1'],
+      qrCells: this.qrPattern(),
+      carRef: (el) => { this._carEl = el; },
+
+      goLobby: () => this.goPhase('lobby'),
+      lobbyBg: lobbyP.bg, lobbyColor: lobbyP.color, lobbyBorder: lobbyP.border,
+      ex1Bg: ex1P.bg, ex1Color: ex1P.color, ex1Border: ex1P.border,
+      ex2Bg: ex2P.bg, ex2Color: ex2P.color, ex2Border: ex2P.border,
+      ex1Suffix: s.phase === 'ex1' ? '· ' + scen1.num : '', ex2Suffix: s.phase === 'ex2' ? '· ' + scen2.num : '',
+      toggleMenu1: () => this.setState(st => ({ menuOpen: st.menuOpen === 'ex1' ? null : 'ex1' })),
+      toggleMenu2: () => this.setState(st => ({ menuOpen: st.menuOpen === 'ex2' ? null : 'ex2' })),
+      menu1Open: s.menuOpen === 'ex1', menu2Open: s.menuOpen === 'ex2',
+      ex1Items, ex2Items,
+
+      reset: () => { clearInterval(this._subTimer); clearInterval(this._rateTimer); clearInterval(this._typeTimer); this.setState({ phase: 'lobby', menuOpen: null, revealed: false, subs: [], spotIdx: null, spotOut: '', spotShown: 0, spotBusy: false, spotHasRun: false, ratings: [{ not: 0, ok: 0, fa: 0 }, { not: 0, ok: 0, fa: 0 }, { not: 0, ok: 0, fa: 0 }], myText: '', mySubmitted: false, myOut: '', myRuns: 0, myRatings: [null, null, null], myRated: false, tipKey: null }); },
+      showLobby: s.phase === 'lobby', showEx1: s.phase === 'ex1', showEx2: s.phase === 'ex2',
+      revealed: s.revealed,
+      primaryLabel, primaryGo, statusLine,
+
+      ex1Tag: s.phase === 'ex1' ? scen1.num : '2.1', ex1Name: scen1.name,
+      ex1Ask: scen1.ask, ex1Material: scen1.material,
+      submissions, subCount: allSubs.length, noSubs: allSubs.length === 0,
+      hasSpot: !!spot, noSpot: !spot,
+      spotName: spot ? spot.name : '', spotText: spot ? spot.text : '',
+      spotChecks: spot ? this.checksFor(spot.text) : [],
+      runSpot, runSpotLabel: s.spotBusy && !s.spotOut ? 'Calling Claude…' : 'Run with Claude ▸',
+      runSpotOpacity: s.spotBusy ? 0.55 : 1,
+      spotOutVisible: s.spotHasRun,
+      spotOut: s.spotOut ? s.spotOut.slice(0, s.spotShown) : (s.spotBusy ? 'Thinking…' : ''),
+      spotStreaming: s.spotBusy || (s.spotOut && s.spotShown < s.spotOut.length),
+
+      ex2Tag: scen2.num, ex2Name: scen2.name,
+      ex2Ask: scen2.ask, ex2Artifact: scen2.artifact,
+      ratePrompts, fantSegs, legend,
+      tipText: tipObj ? tipObj.tip : null,
+
+      phoneJoin, phoneLobby, phoneWrite, phoneSubmitted, phoneRate, phoneDone,
+      join: () => this.setState({ joined: true }),
+      myText: s.myText,
+      onMyText: (e) => this.setState({ myText: e.target.value }),
+      myChecks: this.checksFor(s.myText),
+      submitMine: () => { if (s.myText.trim().length >= 10) this.setState({ mySubmitted: true }); },
+      submitOpacity: s.myText.trim().length >= 10 ? 1 : 0.45,
+      runsLeft: 3 - s.myRuns,
+      runMine, runMineLabel: s.myBusy ? 'Calling Claude…' : (s.myRuns >= 3 ? 'No runs left' : 'Run my prompt ▸'),
+      runMineOpacity: s.myBusy || s.myRuns >= 3 ? 0.5 : 1,
+      myOut: s.myOut,
+      editMine: () => this.setState({ mySubmitted: false }),
+
+      rateCards,
+      submitRatings: () => { if (allRated) this.setState({ myRated: true }); },
+      ratingsOpacity: allRated ? 1 : 0.45,
+      doneTitle: s.revealed ? 'The debrief' : 'Ratings in ✓',
+      doneBody: s.revealed ? 'The winning prompt covers all six components. Save this for your next prompt:' : 'Live results are on the main screen. The reveal is coming up.',
+      showTakeaway: s.revealed,
+    };
+  }
+
+  qrPattern() {
+    if (!this._qr) {
+      const on = '#0A1B30', off = '#ffffff';
+      const finder = (r, c) => (r < 3 && c < 3) || (r < 3 && c > 3) || (r > 3 && c < 3);
+      this._qr = [];
+      let seed = 7;
+      for (let r = 0; r < 7; r++) for (let c = 0; c < 7; c++) {
+        seed = (seed * 31 + r * 7 + c) % 97;
+        this._qr.push(finder(r, c) ? ((r % 3 === 1 && c % 3 === 1) || r === 0 || c === 0 || r === 2 || c === 2 || r === 6 || c === 6 ? on : off) : (seed % 2 ? on : off));
+      }
+    }
+    return this._qr;
+  }
+}
+</script>
+</body>
+</html>
