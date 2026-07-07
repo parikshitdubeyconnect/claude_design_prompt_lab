@@ -154,7 +154,7 @@ export default function ParticipantScreen({ code }: { code: string }) {
                 </div>
               ))}
             </div>
-            <PrimaryButton onClick={join}>Join session</PrimaryButton>
+            <PrimaryButton onClick={join} testid="join-btn">Join session</PrimaryButton>
             <div style={{ fontSize: 12, color: "#FFB547", lineHeight: 1.5, background: "rgba(255,181,71,0.1)", borderRadius: 10, padding: "10px 14px" }}>
               Please don&apos;t enter client, personal or confidential data. All scenarios are synthetic.
             </div>
@@ -179,6 +179,7 @@ export default function ParticipantScreen({ code }: { code: string }) {
             <textarea
               value={myText}
               onChange={(e) => setMyText(e.target.value)}
+              data-testid="write-textarea"
               placeholder="Write the prompt you'd give an AI assistant…"
               style={{ minHeight: 150, borderRadius: 12, border: "1px solid rgba(140,170,210,0.3)", background: GLASS, ...blur, color: "#E8F0FA", fontFamily: "inherit", fontSize: 14, lineHeight: 1.5, padding: 12, resize: "vertical", outline: "none", boxSizing: "border-box", width: "100%" }}
             />
@@ -193,7 +194,7 @@ export default function ParticipantScreen({ code }: { code: string }) {
               })}
             </div>
             <div style={{ fontSize: 11.5, color: "#93A9C6" }}>Instant check — does your prompt give the AI a role, context, a format and constraints?</div>
-            <PrimaryButton onClick={submitMine} disabled={myText.trim().length < 10}>
+            <PrimaryButton onClick={submitMine} disabled={myText.trim().length < 10} testid="submit-prompt">
               Submit to the screen
             </PrimaryButton>
           </div>
@@ -208,9 +209,10 @@ export default function ParticipantScreen({ code }: { code: string }) {
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                 <div style={{ fontSize: 15, fontFamily: "var(--font-space-grotesk)", fontWeight: 700, letterSpacing: "-0.01em" }}>Run it yourself</div>
                 <div style={{ flex: 1 }} />
-                <div style={{ fontSize: 12, color: "#93A9C6", fontWeight: 600 }}>{Math.max(0, MAX_RUNS_PER_SCENARIO - myRuns)} runs left</div>
+                <div style={{ fontSize: 12, color: "#93A9C6", fontWeight: 600 }}><span data-testid="runs-left">{Math.max(0, MAX_RUNS_PER_SCENARIO - myRuns)}</span> runs left</div>
               </div>
               <button
+                data-testid="run-mine"
                 onClick={runMine}
                 disabled={myBusy || myRuns >= MAX_RUNS_PER_SCENARIO}
                 style={{ padding: 13, borderRadius: 12, border: "1px solid rgba(0,184,245,0.5)", background: "transparent", color: "#ACEAFF", fontFamily: "inherit", fontSize: 14, fontWeight: 700, cursor: myBusy || myRuns >= MAX_RUNS_PER_SCENARIO ? "default" : "pointer", opacity: myBusy || myRuns >= MAX_RUNS_PER_SCENARIO ? 0.5 : 1 }}
@@ -245,6 +247,7 @@ export default function ParticipantScreen({ code }: { code: string }) {
                     return (
                       <button
                         key={key}
+                        data-testid={`rate-${i}-${key}`}
                         onClick={() => setMyRatings((prev) => { const n = [...prev]; n[i] = key; return n; })}
                         style={{ flex: 1, padding: "8px 4px", borderRadius: 9, border: `1px solid ${active ? color : "rgba(140,170,210,0.3)"}`, background: active ? color + "26" : "transparent", color: active ? color : "#93A9C6", fontFamily: "inherit", fontSize: 11, fontWeight: 700, cursor: "pointer" }}
                       >
@@ -255,7 +258,7 @@ export default function ParticipantScreen({ code }: { code: string }) {
                 </div>
               </div>
             ))}
-            <PrimaryButton onClick={submitRatings} disabled={!myRatings.every((r) => r != null)}>
+            <PrimaryButton onClick={submitRatings} disabled={!myRatings.every((r) => r != null)} testid="submit-ratings">
               Submit ratings
             </PrimaryButton>
           </div>
@@ -299,13 +302,16 @@ function PrimaryButton({
   children,
   onClick,
   disabled,
+  testid,
 }: {
   children: React.ReactNode;
   onClick: () => void;
   disabled?: boolean;
+  testid?: string;
 }) {
   return (
     <button
+      data-testid={testid}
       onClick={onClick}
       disabled={disabled}
       style={{

@@ -240,7 +240,7 @@ export default function FacilitatorScreen() {
                     animation: "pulseDot 2s infinite",
                   }}
                 />
-                Session {SESSION_CODE} · {participants} joined
+                Session {SESSION_CODE} · <span data-testid="participant-count">{participants}</span> joined
               </div>
               <div style={{ fontSize: 11, color: "#93A9C6" }}>
                 Scan any time to join — your phone lands on the live exercise
@@ -465,6 +465,7 @@ export default function FacilitatorScreen() {
                     return (
                       <button
                         key={sb.id}
+                        data-testid="submission"
                         onClick={() => {
                           setSpotIdx(i);
                           setSpotOut("");
@@ -520,6 +521,7 @@ export default function FacilitatorScreen() {
                       <div style={{ fontSize: 15, lineHeight: 1.6, color: "#E8F0FA", background: INSET, borderRadius: 12, padding: 14 }}>{spot.text}</div>
                       <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
                         <button
+                          data-testid="run-claude"
                           onClick={runSpot}
                           style={{
                             padding: "10px 20px",
@@ -540,10 +542,10 @@ export default function FacilitatorScreen() {
                         <span style={{ fontSize: 12, color: "#93A9C6" }}>claude-sonnet · live call</span>
                       </div>
                       {spotHasRun && (
-                        <div className="pl-scroll" style={{ background: INSET, border: "1px solid rgba(140,170,210,0.12)", borderRadius: 12, padding: 14, fontSize: 13, lineHeight: 1.65, color: "#DCE7F5", whiteSpace: "pre-wrap", maxHeight: 320, overflow: "auto" }}>
+                        <div data-testid="spotlight-output" className="pl-scroll" style={{ background: INSET, border: "1px solid rgba(140,170,210,0.12)", borderRadius: 12, padding: 14, fontSize: 13, lineHeight: 1.65, color: "#DCE7F5", whiteSpace: "pre-wrap", maxHeight: 320, overflow: "auto" }}>
                           {spotOut || (spotStreaming ? "Thinking…" : "")}
                           {spotStreaming && (
-                            <span style={{ display: "inline-block", width: 8, height: 15, background: "#00B8F5", marginLeft: 2, verticalAlign: "text-bottom", animation: "blinkCaret 0.9s infinite" }} />
+                            <span data-testid="stream-caret" style={{ display: "inline-block", width: 8, height: 15, background: "#00B8F5", marginLeft: 2, verticalAlign: "text-bottom", animation: "blinkCaret 0.9s infinite" }} />
                           )}
                         </div>
                       )}
@@ -601,7 +603,7 @@ export default function FacilitatorScreen() {
                           {p.label}
                         </span>
                         {v && (
-                          <span style={{ padding: "3px 12px", borderRadius: 999, fontSize: 11, fontFamily: "var(--font-space-grotesk)", fontWeight: 700, letterSpacing: "-0.01em", background: v[1], color: v[2] }}>
+                          <span data-testid={`verdict-${p.tier}`} style={{ padding: "3px 12px", borderRadius: 999, fontSize: 11, fontFamily: "var(--font-space-grotesk)", fontWeight: 700, letterSpacing: "-0.01em", background: v[1], color: v[2] }}>
                             {v[0]}
                           </span>
                         )}
@@ -631,6 +633,7 @@ export default function FacilitatorScreen() {
                     {scen2.segs.map((seg, i) => (
                       <span
                         key={i}
+                        data-testid={`anatomy-seg-${seg.k}`}
                         title={LEGEND.find((l) => l.k === seg.k)?.tip}
                         onClick={() => setTipKey(seg.k)}
                         style={{ background: COLORS[seg.k] + "2E", boxShadow: `inset 0 -2px 0 ${COLORS[seg.k]}`, borderRadius: 3, padding: "1px 3px", cursor: "pointer" }}
@@ -653,7 +656,7 @@ export default function FacilitatorScreen() {
                     ))}
                   </div>
                   {tipText && (
-                    <div style={{ fontSize: 12.5, color: "#ACEAFF", background: "rgba(0,184,245,0.08)", borderRadius: 8, padding: "8px 12px" }}>{tipText}</div>
+                    <div data-testid="tip-text" style={{ fontSize: 12.5, color: "#ACEAFF", background: "rgba(0,184,245,0.08)", borderRadius: 8, padding: "8px 12px" }}>{tipText}</div>
                   )}
                 </div>
               )}
@@ -663,13 +666,14 @@ export default function FacilitatorScreen() {
           {/* controls */}
           <div style={{ display: "flex", gap: 10, alignItems: "center", background: GLASS, ...blur, border: "1px solid rgba(140,170,210,0.22)", boxShadow: PANEL_SHADOW, borderRadius: 14, padding: "12px 16px" }}>
             <button
+              data-testid="primary-control"
               onClick={primaryAction}
               style={{ padding: "11px 24px", borderRadius: 10, border: "none", background: "linear-gradient(135deg, #1E49E2 0%, #0090E0 100%)", color: "#fff", boxShadow: "0 4px 18px rgba(0,144,224,0.35)", fontFamily: "inherit", fontSize: 14, fontWeight: 700, cursor: "pointer" }}
             >
               {primaryLabel}
             </button>
             <div style={{ flex: 1 }} />
-            <div style={{ fontSize: 13, color: "#93A9C6" }}>{statusLine}</div>
+            <div data-testid="status-line" style={{ fontSize: 13, color: "#93A9C6" }}>{statusLine}</div>
           </div>
         </section>
       </main>
@@ -737,6 +741,7 @@ function DropdownPill({
           {items.map((it) => (
             <button
               key={it.num}
+              data-testid={`menu-item-${it.num}`}
               onClick={it.onClick}
               style={{ textAlign: "left", padding: "10px 12px", borderRadius: 8, border: "none", background: it.active ? it.activeBg : "transparent", color: it.active ? it.activeColor : "#C9D8EC", fontFamily: "inherit", fontSize: 13, fontWeight: 600, cursor: "pointer", display: "flex", gap: 10, alignItems: "baseline" }}
               onMouseEnter={(e) => { if (!it.active) e.currentTarget.style.background = hoverBg; }}

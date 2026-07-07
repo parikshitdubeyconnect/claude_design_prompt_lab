@@ -1,0 +1,140 @@
+import { test, before } from "node:test";
+import assert from "node:assert/strict";
+import { readdirSync, readFileSync, existsSync } from "node:fs";
+import { join } from "node:path";
+
+// API-level integration tests. Requires the app running (default :3100).
+//   PL_PORT=3100 node --import tsx --test tests/api/api.test.ts
+const BASE = `http://localhost:${process.env.PL_PORT || "3100"}`;
+const CODE = "4271";
+
+async function post(path: string, body: unknown) {
+  return fetch(`${BASE}${path}`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(body),
+  });
+}
+const state = () => fetch(`${BASE}/api/session/${CODE}/state`, { cache: "no-store" }).then((r) => r.json());
+
+before(async () => {
+  await post(`/api/session/${CODE}/state`, { action: "reset" });
+});
+
+test("T1.3 — invalid session code → 404, no crash", async () => {
+  const r = await fetch(`${BASE}/api/session/9999/state`);
+  assert.equal(r.status, 404);
+  const r2 = await post(`/api/session/9999/submit`, { pid: "x", text: "hello world here" });
+  assert.equal(r2.status, 404);
+});
+
+test("T2.5 — reset clears submissions, ratings and returns to lobby", async () => {
+  await post(`/api/session/${CODE}/state`, { action: "goto", phase: "ex1", idx: 0 });
+  await post(`/api/session/${CODE}/submit`, { pid: "p1", text: "You are an RM, draft a reply under 200 words." });
+  await post(`/api/session/${CODE}/state`, { action: "reset" });
+  const s = await state();
+  assert.equal(s.phase, "lobby");
+  assert.equal(s.submissions.length, 0);
+  assert.deepEqual(s.ratings, [
+    { not: 0, ok: 0, fa: 0 },
+    { not: 0, ok: 0, fa: 0 },
+    { not: 0, ok: 0, fa: 0 },
+  ]);
+});
+
+test("T3.1 (server) — submission under 10 chars rejected", async () => {
+  await post(`/api/session/${CODE}/state`, { action: "goto", phase: "ex1", idx: 0 });
+  const r = await post(`/api/session/${CODE}/submit`, { pid: "p_short", text: "hi" });
+  assert.equal(r.status, 400);
+  const s = await state();
+  assert.equal(s.submissions.length, 0);
+});
+
+test("T3.2 — submission appears in feed with anonymous participant label", async () => {
+  await post(`/api/session/${CODE}/state`, { action: "goto", phase: "ex1", idx: 0 });
+  await post(`/api/session/${CODE}/submit`, { pid: "p_named", text: "You are an RM, acknowledge both failures and list fixes." });
+  const s = await state();
+  const mine = s.submissions.find((x: { id: string }) => x.id === "p_named");
+  assert.ok(mine, "submission present");
+  assert.match(mine.name, /^Participant \d+$/);
+});
+
+test("T3.7 — edit-and-resubmit replaces, does not duplicate", async () => {
+  await post(`/api/session/${CODE}/state`, { action: "goto", phase: "ex1", idx: 0 });
+  await post(`/api/session/${CODE}/submit`, { pid: "p_edit", text: "first version of my prompt here" });
+  await post(`/api/session/${CODE}/submit`, { pid: "p_edit", text: "second edited version of my prompt" });
+  const s = await state();
+  const mine = s.submissions.filter((x: { id: string }) => x.id === "p_edit");
+  assert.equal(mine.length, 1);
+  assert.match(mine[0].text, /second edited/);
+});
+
+test("T3.6 / T5.4 — participant capped at 3 Claude runs per scenario (server enforced)", async () => {
+  await post(`/api/session/${CODE}/state`, { action: "reset" });
+  await post(`/api/session/${CODE}/state`, { action: "goto", phase: "ex1", idx: 0 });
+  const call = () =>
+    post(`/api/claude`, { prompt: "Summarise this", artifact: "MEMO", role: "participant", code: CODE, pid: "p_limit", ex1Idx: 0 });
+  for (let i = 0; i < 3; i++) assert.equal((await call()).status, 200, `run ${i + 1} ok`);
+  const forged = await call(); // forged 4th
+  assert.equal(forged.status, 429);
+});
+
+test("T5.6 — oversized prompt rejected server-side (413)", async () => {
+  const r = await post(`/api/claude`, { prompt: "x".repeat(5000), artifact: "M", role: "facilitator", code: CODE });
+  assert.equal(r.status, 413);
+});
+
+test("T5.3 — system prompt is server-owned; client cannot override or strip it", () => {
+  const src = readFileSync(join(process.cwd(), "app/api/claude/route.ts"), "utf8");
+  // The route must always attach the server SYS constant and never read a client `system`.
+  assert.match(src, /system:\s*SYS/);
+  assert.doesNotMatch(src, /body\.system/);
+});
+
+test("T4.1 — rating rejected unless all prompts rated", async () => {
+  await post(`/api/session/${CODE}/state`, { action: "goto", phase: "ex2", idx: 0 });
+  const r = await post(`/api/session/${CODE}/rate`, { pid: "p_partial", picks: ["ok", null, "fa"] });
+  assert.equal(r.status, 400);
+});
+
+test("T4.2 / T4.3 — ratings aggregate; one set per participant (idempotent)", async () => {
+  await post(`/api/session/${CODE}/state`, { action: "reset" });
+  await post(`/api/session/${CODE}/state`, { action: "goto", phase: "ex2", idx: 0 });
+  const first = await (await post(`/api/session/${CODE}/rate`, { pid: "p_r1", picks: ["ok", "not", "fa"] })).json();
+  assert.equal(first.counted, true);
+  const dup = await (await post(`/api/session/${CODE}/rate`, { pid: "p_r1", picks: ["fa", "fa", "fa"] })).json();
+  assert.equal(dup.counted, false); // replay ignored
+  await post(`/api/session/${CODE}/rate`, { pid: "p_r2", picks: ["fa", "not", "fa"] });
+  const s = await state();
+  const total = s.ratings.reduce((a: number, r: { not: number; ok: number; fa: number }) => a + r.not + r.ok + r.fa, 0);
+  assert.equal(total, 6, "two participants × three picks, no double count");
+});
+
+test("T4.6 — switching rate scenario resets aggregates to zero", async () => {
+  await post(`/api/session/${CODE}/state`, { action: "goto", phase: "ex2", idx: 0 });
+  await post(`/api/session/${CODE}/rate`, { pid: "p_sw", picks: ["ok", "ok", "ok"] });
+  await post(`/api/session/${CODE}/state`, { action: "goto", phase: "ex2", idx: 1 });
+  const s = await state();
+  const total = s.ratings.reduce((a: number, r: { not: number; ok: number; fa: number }) => a + r.not + r.ok + r.fa, 0);
+  assert.equal(total, 0);
+});
+
+test("T5.1 / T5.2 — no Anthropic endpoint or key header in the client bundle", () => {
+  const dir = join(process.cwd(), ".next/static");
+  assert.ok(existsSync(dir), "run `npm run build` before this test");
+  const files: string[] = [];
+  const walk = (d: string) => {
+    for (const e of readdirSync(d, { withFileTypes: true })) {
+      const p = join(d, e.name);
+      if (e.isDirectory()) walk(p);
+      else if (e.name.endsWith(".js")) files.push(p);
+    }
+  };
+  walk(dir);
+  for (const f of files) {
+    const txt = readFileSync(f, "utf8");
+    assert.ok(!txt.includes("api.anthropic.com"), `${f} must not call Anthropic directly`);
+    assert.ok(!txt.includes("x-api-key"), `${f} must not carry an api key header`);
+    assert.ok(!txt.includes("ANTHROPIC_API_KEY"), `${f} must not embed the key name`);
+  }
+});
