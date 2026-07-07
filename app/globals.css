@@ -1,0 +1,191 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Design tokens (ported from the Prompt Lab design source) ── */
+:root {
+  --bg-base: #0a1b30;
+  --panel-glass: rgba(18, 41, 68, 0.62);
+  --inset: rgba(8, 24, 42, 0.72);
+  --border-soft: rgba(140, 170, 210, 0.22);
+  --border-accent: rgba(0, 184, 245, 0.35);
+  --text: #e8f0fa;
+  --text-secondary: #c9d8ec;
+  --text-muted: #93a9c6;
+  --brand-blue: #1e49e2;
+  --brand-blue-end: #0090e0;
+  --cyan: #00b8f5;
+  --cyan-light: #aceaff;
+  --violet: #9f7bff;
+  --violet-light: #c9b4ff;
+  --green: #33e0a0;
+  --green-light: #7ff0c4;
+  --amber: #ffb547;
+  --amber-light: #ffcb7a;
+  --red: #ff7a90;
+  --red-light: #ff9dad;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg-base);
+  color: var(--text);
+  font-family: var(--font-public-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--cyan);
+}
+a:hover {
+  color: var(--cyan-light);
+}
+
+::selection {
+  background: rgba(0, 184, 245, 0.35);
+}
+
+textarea,
+input {
+  font-family: inherit;
+}
+
+/* ── Keyframes ── */
+@keyframes blinkCaret {
+  0%,
+  55% {
+    opacity: 1;
+  }
+  56%,
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes pulseDot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes drift1 {
+  0% {
+    transform: translate(-8%, -6%) scale(1);
+  }
+  50% {
+    transform: translate(10%, 8%) scale(1.25);
+  }
+  100% {
+    transform: translate(-8%, -6%) scale(1);
+  }
+}
+@keyframes drift2 {
+  0% {
+    transform: translate(6%, 10%) scale(1.15);
+  }
+  50% {
+    transform: translate(-10%, -8%) scale(0.9);
+  }
+  100% {
+    transform: translate(6%, 10%) scale(1.15);
+  }
+}
+@keyframes drift3 {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(-6%, 10%) scale(1.2);
+  }
+  66% {
+    transform: translate(8%, -6%) scale(0.95);
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+@keyframes gridSlide {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 56px 56px;
+  }
+}
+@keyframes wheelSpin {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+@keyframes flakeRise {
+  to {
+    transform: translateY(-118vh);
+  }
+}
+@keyframes flakeSway {
+  from {
+    transform: translateX(-16px);
+  }
+  to {
+    transform: translateX(16px);
+  }
+}
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes beamSweep {
+  0% {
+    transform: translateX(-60vw) rotate(18deg);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  88% {
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(160vw) rotate(18deg);
+    opacity: 0;
+  }
+}
+
+/* Custom slim scrollbars for output panels */
+.pl-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.pl-scroll::-webkit-scrollbar-thumb {
+  background: rgba(140, 170, 210, 0.28);
+  border-radius: 999px;
+}
+.pl-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}

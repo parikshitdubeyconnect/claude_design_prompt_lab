@@ -1,25 +1,94 @@
-# CODING AGENTS: READ THIS FIRST
+# Prompt Lab — Prompting for Leadership
 
-This is a **handoff bundle** from Claude Design (claude.ai/design).
+An interactive, facilitator-led workshop app for a "Prompting for Leadership" session
+inside a Demystifying AI seminar. A facilitator drives a projected screen; participants
+join from their phones via QR + a 4-digit session code (no login). The session runs two
+hands-on exercises, each with three realistic **synthetic** banking scenarios:
 
-A user mocked up designs in HTML/CSS/JS using an AI design tool, then exported this bundle so a coding agent can implement the designs for real.
+- **Exercise 2.x — Write the prompt.** The facilitator projects a task + reference
+  artefact; participants write the prompt they'd give an AI assistant; submissions stream
+  to the projected screen; the facilitator spotlights one and runs it against Claude live.
+- **Exercise 3.x — Rate the prompts.** Three pre-written prompts (bad / okay / fantastic,
+  order varies) per task; participants rate each; live aggregate bars; a **Reveal & debrief**
+  shows verdicts and a colour-coded anatomy of the fantastic prompt (Role · Context · Task ·
+  Format · Constraints/Tone · Examples).
 
-## What you should do — IMPORTANT
+Built from the design handoff in [`project/`](./project) (the original HTML prototype,
+requirements brief and design notes). See [`project/design_handoff_prompt_lab`](./project/design_handoff_prompt_lab)
+for the source of truth on copy, colours and behaviour.
 
-**Read the chat transcripts first.** There are 1 chat transcript(s) in `chats/`. The transcripts show the full back-and-forth between the user and the design assistant — they tell you **what the user actually wants** and **where they landed** after iterating. Don't skip them. The final HTML files are the output, but the chat is where the intent lives.
+## Stack
 
-**Read `project/Prompt Lab v2.dc.html` in full.** The user had this file open when they triggered the handoff, so it's almost certainly the primary design they want built. Read it top to bottom — don't skim. Then **follow its imports**: open every file it pulls in (shared components, CSS, scripts) so you understand how the pieces fit together before you start implementing.
+- **Next.js 14** (App Router) + TypeScript, React 18.
+- **Server-side Claude proxy** — the Anthropic key lives only in server env; the browser
+  never sees it. Responses stream (SSE → plain-text) to the UI.
+- **Realtime session state** via a small KV layer: **Upstash Redis / Vercel KV** in
+  production, with an in-memory fallback for local dev. Clients poll ~1.5s so it survives
+  flaky venue Wi-Fi (no websocket server to babysit).
 
-**If anything is ambiguous, ask the user to confirm before you start implementing.** It's much cheaper to clarify scope up front than to build the wrong thing.
+## Routes
 
-## About the design files
+| Route            | Who          | What                                                            |
+| ---------------- | ------------ | -------------------------------------------------------------- |
+| `/`              | anyone       | Landing — open the facilitator screen or join as a participant |
+| `/facilitate`    | facilitator  | The projected screen: stepper, lobby, both exercises, controls |
+| `/join/[code]`   | participants | Mobile web page that follows the live exercise                 |
 
-The design medium is **HTML/CSS/JS** — these are prototypes, not production code. Your job is to **recreate them pixel-perfectly** in whatever technology makes sense for the target codebase (React, Vue, native, whatever fits). Match the visual output; don't copy the prototype's internal structure unless it happens to fit.
+### API
 
-**Don't render these files in a browser or take screenshots unless the user asks you to.** Everything you need — dimensions, colors, layout rules — is spelled out in the source. Read the HTML and CSS directly; a screenshot won't tell you anything they don't.
+| Endpoint                          | Method | Purpose                                             |
+| --------------------------------- | ------ | --------------------------------------------------- |
+| `/api/session/[code]/state`       | GET    | Poll the live snapshot (+ participant heartbeat)    |
+| `/api/session/[code]/state`       | POST   | Facilitator controls: `goto` / `reveal` / `reset`   |
+| `/api/session/[code]/submit`      | POST   | Participant submits (or edits) their prompt         |
+| `/api/session/[code]/rate`        | POST   | Participant submits their rating set (idempotent)   |
+| `/api/claude`                     | POST   | Streaming Claude proxy (rate-limited per participant)|
 
-## Bundle contents
+## Getting started
 
-- `README.md` — this file
-- `chats/` — conversation transcripts (read these!)
-- `project/` — the `Converting markdown to website` project files (HTML prototypes, assets, components)
+```bash
+npm install
+cp .env.example .env.local   # add ANTHROPIC_API_KEY (and Upstash creds for real realtime)
+npm run dev                  # http://localhost:3000
+```
+
+Open `/facilitate` on the projector and `/join/4271` on phones. Without an
+`ANTHROPIC_API_KEY` the Claude proxy runs in a graceful **demo mode** (streams a
+placeholder) so the app is fully clickable before a key is provisioned. Without Upstash
+credentials the session store is in-memory (fine for a single instance / local demo).
+
+### Environment variables
+
+| Variable                                            | Required | Notes                                              |
+| --------------------------------------------------- | -------- | -------------------------------------------------- |
+| `ANTHROPIC_API_KEY`                                 | for live | Server-side only. Absent → demo mode.              |
+| `UPSTASH_REDIS_REST_URL` / `..._TOKEN`              | for scale| Or Vercel KV's `KV_REST_API_URL` / `..._TOKEN`.    |
+| `NEXT_PUBLIC_BASE_URL`                              | optional | Fallback base for the QR join URL.                 |
+
+## Guardrails (Responsible AI)
+
+- Prominent "synthetic scenarios only — no client or personal data" disclaimer on the
+  facilitator header (every phase) and the participant join screen.
+- The banking-appropriate system prompt is attached **server-side** and cannot be
+  overridden by a client payload.
+- Server-side input length cap and per-participant run limits (3 / scenario).
+- No persistence beyond the session — an auto-expiring store, no accounts, no personal
+  data, no third-party trackers.
+
+## Testing
+
+An automated test suite lives in [`tests/`](./tests), mapped to `project/design_handoff_prompt_lab/TEST_PLAN.md`:
+
+```bash
+npm run test:unit   # heuristic + pure-logic unit tests (node:test)
+npm run test:api    # API-level integration tests against a running server
+npm run test:e2e    # Playwright multi-client E2E (facilitator + participants)
+```
+
+See [`tests/README.md`](./tests/README.md) for the case-by-case coverage matrix.
+
+## Deploying to Vercel
+
+1. Import the repo; framework preset **Next.js**.
+2. Set `ANTHROPIC_API_KEY` and Upstash/Vercel KV env vars.
+3. Deploy. The QR encodes `https://<host>/join/4271`.

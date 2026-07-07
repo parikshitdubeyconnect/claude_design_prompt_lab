@@ -1,0 +1,29 @@
+{
+  "name": "prompt-lab",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Prompt Lab — a facilitator-led 'Prompting for Leadership' workshop app",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@upstash/redis": "^1.34.3",
+    "next": "^14.2.35",
+    "qrcode": "^1.5.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "@types/qrcode": "^1.5.5",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.5.16",
+    "tailwindcss": "^3.4.13",
+    "typescript": "^5.6.2"
+  }
+}
