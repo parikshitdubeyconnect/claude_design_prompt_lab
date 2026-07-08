@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
+  getCore,
   getSnapshot,
   heartbeat,
   isValidCode,
@@ -45,7 +46,7 @@ export async function POST(req: NextRequest, { params }: { params: { code: strin
     case "goto": {
       const phase = body.phase ?? "lobby";
       if (phase === "lobby") {
-        await setCore(code, { phase, revealed: false, promptsShown: false });
+        await setCore(code, { phase, revealed: false, promptsShown: false, docShown: false });
       } else {
         const list = phase === "ex1" ? EX1_SCEN : EX2_SCEN;
         const idx = Math.max(0, Math.min(list.length - 1, body.idx ?? 0));
@@ -55,6 +56,7 @@ export async function POST(req: NextRequest, { params }: { params: { code: strin
           phase,
           revealed: false,
           promptsShown: false, // rate prompts start hidden until "Show prompts"
+          docShown: false, // stop flashing any document
           ...(phase === "ex1" ? { ex1Idx: idx } : { ex2Idx: idx }),
         });
       }
@@ -63,6 +65,11 @@ export async function POST(req: NextRequest, { params }: { params: { code: strin
     case "showPrompts":
       await setCore(code, { promptsShown: true });
       break;
+    case "toggleDoc": {
+      const cur = await getCore(code);
+      await setCore(code, { docShown: !cur.docShown });
+      break;
+    }
     case "reveal":
       await setCore(code, { revealed: true });
       break;

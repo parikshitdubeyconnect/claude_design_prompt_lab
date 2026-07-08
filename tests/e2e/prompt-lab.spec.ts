@@ -80,8 +80,8 @@ test("T9.1 happy path — join, rate (gated+sequential), reveal, then write+run 
   await ta.fill("too short");
   await expect(p1.page.getByTestId("submit-prompt")).toBeDisabled();
   await ta.fill(
-    "You are an experienced relationship manager. Context: a 12-year client, two payroll failures, the CFO escalated. " +
-      "Draft a reply email as a numbered list of the three fixes with dates. Keep it under 200 words, warm tone, no jargon.",
+    "You are a senior leader preparing for the committee. Context: this quarterly review will be discussed in the meeting and you have three minutes. " +
+      "Summarise it into exactly five numbered key takeaways, each decision-relevant. Keep it under 150 words, neutral tone, do not invent anything.",
   );
   await expect(p1.page.getByTestId("submit-prompt")).toBeEnabled();
   for (const chip of ["✓ Role", "✓ Context", "✓ Format", "✓ Constraints"]) {
@@ -148,6 +148,32 @@ test("Key takeaways overlay — link next to Reset opens takeaways + PDF downloa
   expect(pdf.headers()["content-type"]).toContain("pdf");
   await fac.keyboard.press("Escape");
   await expect(ov).toHaveCount(0);
+});
+
+test("Document flash — facilitator flashes the scenario document onto every device", async ({ browser, page: fac }) => {
+  await fac.goto(`${base}/facilitate`);
+  await reset(fac);
+  await fac.reload();
+  await fac.getByRole("button", { name: /Write the prompt/ }).click();
+  await fac.getByTestId("menu-item-3.1").click();
+
+  const p = await newParticipant(browser);
+  await p.page.getByTestId("join-btn").click();
+  await expect(p.page.getByText("EXERCISE 3.1")).toBeVisible({ timeout: 8000 });
+
+  // Flash the document
+  await fac.getByTestId("toggle-doc").click();
+  await expect(fac.getByTestId("document-overlay")).toBeVisible();
+  await expect(fac.getByTestId("document-overlay")).toContainText(/Quarterly Review/);
+  // …it appears on the participant device too
+  await expect(p.page.getByTestId("doc-overlay")).toBeVisible({ timeout: 8000 });
+  await expect(p.page.getByTestId("doc-overlay")).toContainText(/Quarterly Review/);
+
+  // Take it down (Esc) → clears everywhere
+  await fac.keyboard.press("Escape");
+  await expect(fac.getByTestId("document-overlay")).toHaveCount(0);
+  await expect(p.page.getByTestId("doc-overlay")).toHaveCount(0, { timeout: 8000 });
+  await p.ctx.close();
 });
 
 test("T1.3 invalid code — clear 404, no crash", async ({ page }) => {

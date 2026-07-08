@@ -53,16 +53,15 @@ export const SYS =
 export const EX1_SCEN: Ex1Scenario[] = [
   {
     num: "3.1",
-    name: "Client escalation email",
-    ask: "A 12-year corporate client, Vertex Logistics, has had two payroll payment files fail in three weeks. Their CFO has escalated to your regional head and hinted at moving their operating accounts. The fixes are underway. Write the prompt you'd give an AI assistant to draft your reply email to the CFO.",
+    name: "Document summarization",
+    ask: "You're a senior leader walking into the committee meeting. Summarise the document below into five key takeaways you can lead the discussion from. Write the prompt you'd give an AI assistant.",
     material:
-      "ESCALATION NOTE (SYNTHETIC) - Client: Vertex Logistics Ltd, 12-year relationship. Issue: two payroll payment files failed in three weeks (batch validation error, then a cut-off miss during system maintenance). ~1,800 employees paid one day late each time. CFO Anita Rao escalated to the regional head and mentioned reviewing where their operating accounts sit. Fixes: validation rule patched (done), dedicated maker-checker for their payroll files (from Monday), payroll files moved to the early processing window (from next cycle). Service manager assigned: Rohan Mehta.",
+      "BOARD PRE-READ (SYNTHETIC) — Commercial Banking Quarterly Review, Q2 FY25\n\nPortfolio: Commercial lending book INR 12,400 Cr, up 6% QoQ. New-to-bank acquisition ahead of plan (+14%), but concentrated in two sectors (textiles, auto components) now 41% of incremental exposure. Net interest margin compressed 12 bps to 3.28% on deposit repricing; a further 5–8 bps of pressure is expected next quarter.\n\nAsset quality: GNPA stable at 2.1%, but early-warning signals rose in mid-market (SMA-2 up from 3.4% to 4.6%), driven by receivable stretch among export-linked clients after the new EU norms. Restructured book INR 210 Cr, of which INR 40 Cr is showing renewed stress.\n\nOperations & technology: the core-banking upgrade is 8 weeks behind schedule; two payroll-processing incidents this quarter (since remediated) affected 3 corporate clients. Trade-finance digital adoption reached 58% against a 65% target.\n\nPeople & risk: relationship-manager attrition is 18% (sector average 14%), with two key resignations on the large-corporate desk. An RBI thematic review on related-party exposures is scheduled next quarter; compliance has requested additional analyst headcount.\n\nAsks for the committee: (1) approve tighter sector caps for textiles/auto; (2) sign off INR 6 Cr additional tech spend to recover the core-banking timeline; (3) decide the RM retention package; (4) note the EU-norms impact on export clients.",
     subs: [
-      { name: "Participant 07", text: "Write an apology email to Vertex Logistics for the payment failures." },
-      { name: "Participant 15", text: "Draft email to client re escalation. Professional tone." },
-      { name: "Participant 23", text: "You are a relationship manager. Write an email to the CFO of Vertex Logistics apologising for two failed payroll runs, list the fixes with dates, and keep it under 200 words." },
-      { name: "Participant 02", text: "apologize to the client and make sure they dont leave" },
-      { name: "Participant 31", text: "Act as an experienced RM. Context: 12-year client, two payroll failures, CFO escalated and may move accounts. Task: reply email from me to the CFO. Format: acknowledge both failures, one plain sentence on cause, three fixes with dates, one named contact, offer a call. Tone: warm, no jargon, no grovelling." },
+      { name: "Participant 07", text: "Summarise this document in five points." },
+      { name: "Participant 15", text: "Give me the five most important takeaways from this for my meeting." },
+      { name: "Participant 23", text: "You are a senior leader. Summarise the document below into exactly five key takeaways I can use to lead the committee — each one crisp and decision-relevant." },
+      { name: "Participant 02", text: "what does this say" },
     ],
   },
   {

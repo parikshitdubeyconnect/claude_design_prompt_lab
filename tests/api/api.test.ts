@@ -126,6 +126,19 @@ test("T4.6 — switching rate scenario resets aggregates and re-hides prompts", 
   assert.equal(s.promptsShown, false);
 });
 
+test("Document flash — toggleDoc broadcasts docShown; scenario switch hides it", async () => {
+  await post(`/api/session/${CODE}/state`, { action: "reset" });
+  await goto("ex1", 0);
+  assert.equal((await state()).docShown, false);
+  await post(`/api/session/${CODE}/state`, { action: "toggleDoc" });
+  assert.equal((await state()).docShown, true, "toggleDoc turns the document on");
+  await post(`/api/session/${CODE}/state`, { action: "toggleDoc" });
+  assert.equal((await state()).docShown, false, "toggleDoc turns it back off");
+  await post(`/api/session/${CODE}/state`, { action: "toggleDoc" }); // on again
+  await goto("ex1", 1); // switching scenario
+  assert.equal((await state()).docShown, false, "switching scenarios takes the document down");
+});
+
 test("T5.1 / T5.2 — no Anthropic endpoint or key header in the client bundle", () => {
   const dir = join(process.cwd(), ".next/static");
   assert.ok(existsSync(dir), "run `npm run build` before this test");

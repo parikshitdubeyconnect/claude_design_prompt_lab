@@ -70,6 +70,7 @@ export default function FacilitatorScreen() {
   const ex2Idx = snapshot?.ex2Idx ?? 0; // rate exercise (2.x)
   const revealed = snapshot?.revealed ?? false;
   const promptsShown = snapshot?.promptsShown ?? false;
+  const docShown = snapshot?.docShown ?? false;
   const participants = snapshot?.participants ?? 0;
   const submissions = useMemo(() => snapshot?.submissions ?? [], [snapshot]);
   const ratings = snapshot?.ratings ?? EX2_SCEN[ex2Idx].prompts.map(() => ({ not: 0, ok: 0, fa: 0, ov: 0 }));
@@ -307,6 +308,15 @@ export default function FacilitatorScreen() {
                 <div style={{ display: "flex", gap: 20, alignItems: "baseline" }}>
                   <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "1px", color: "#00B8F5", textTransform: "uppercase", whiteSpace: "nowrap" }}>{scen1.num} · The ask</div>
                   <div style={{ fontSize: 15, lineHeight: 1.55, color: "#C9D8EC" }}>{scen1.ask}</div>
+                  <div style={{ flex: 1 }} />
+                  <button
+                    data-testid="toggle-doc"
+                    onClick={() => control("toggleDoc")}
+                    title="Flash this document full-screen and onto every phone (shortcut: D)"
+                    style={{ padding: "7px 14px", borderRadius: 999, border: `1px solid ${docShown ? "#00B8F5" : "rgba(0,184,245,0.4)"}`, background: docShown ? "rgba(0,184,245,0.16)" : "transparent", color: "#ACEAFF", fontFamily: "inherit", fontSize: 12, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}
+                  >
+                    {docShown ? "● Document on screen" : "📄 Show document"}
+                  </button>
                 </div>
                 <div style={{ fontSize: 12.5, lineHeight: 1.6, color: "#93A9C6", background: INSET, borderRadius: 10, padding: "12px 14px", whiteSpace: "pre-wrap" }}>{scen1.material}</div>
               </div>
@@ -465,6 +475,42 @@ export default function FacilitatorScreen() {
 
       {showQR && <QROverlay url={url} onClose={() => setShowQR(false)} />}
       {showTakeaways && <KeyTakeawaysOverlay onClose={() => setShowTakeaways(false)} />}
+      {docShown && phase === "ex1" && (
+        <DocumentOverlay title={scen1.name} body={scen1.material} onClose={() => control("toggleDoc")} />
+      )}
+    </div>
+  );
+}
+
+// ── Document flash overlay (broadcast to every device via docShown) ──
+function DocumentOverlay({ title, body, onClose }: { title: string; body: string; onClose: () => void }) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape" || e.key === "d" || e.key === "D") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+  return (
+    <div
+      data-testid="document-overlay"
+      onClick={onClose}
+      style={{ position: "fixed", inset: 0, zIndex: 100, background: "rgba(6,15,28,0.9)", ...blur, display: "flex", alignItems: "flex-start", justifyContent: "center", overflow: "auto", padding: "40px 20px", cursor: "pointer" }}
+    >
+      <div onClick={(e) => e.stopPropagation()} style={{ width: "100%", maxWidth: 900, background: "rgba(10,27,48,0.96)", border: "1px solid rgba(0,184,245,0.35)", boxShadow: PANEL_SHADOW, borderRadius: 18, padding: "26px 30px", display: "flex", flexDirection: "column", gap: 14, cursor: "default" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: "1px", color: "#00B8F5", textTransform: "uppercase" }}>Document</span>
+          <div style={{ fontSize: 20, fontFamily: "var(--font-space-grotesk)", fontWeight: 700, letterSpacing: "-0.01em", color: "#E8F0FA" }}>{title}</div>
+          <div style={{ flex: 1 }} />
+          <span style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "#7FF0C4", fontWeight: 700 }}>
+            <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#33E0A0", animation: "pulseDot 2s infinite" }} />
+            Live on participants&apos; devices
+          </span>
+          <button onClick={onClose} style={{ padding: "6px 12px", borderRadius: 999, border: "1px solid rgba(140,170,210,0.3)", background: "transparent", color: "#93A9C6", fontFamily: "inherit", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>Close ✕</button>
+        </div>
+        <div className="pl-scroll" style={{ fontSize: 15, lineHeight: 1.7, color: "#E8F0FA", background: "rgba(8,24,42,0.72)", borderRadius: 12, padding: "18px 20px", whiteSpace: "pre-wrap", maxHeight: "72vh", overflow: "auto" }}>{body}</div>
+        <div style={{ fontSize: 11.5, color: "#93A9C6", textAlign: "center" }}>Click anywhere, press Esc or D to take it down</div>
+      </div>
     </div>
   );
 }

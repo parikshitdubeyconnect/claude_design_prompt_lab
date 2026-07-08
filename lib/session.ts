@@ -20,6 +20,8 @@ export interface SessionCore {
   revealed: boolean;
   /** Rate exercise gate: prompts stay hidden (and rating closed) until shown. */
   promptsShown: boolean;
+  /** Write exercise: facilitator is flashing the scenario document to all devices. */
+  docShown: boolean;
   updatedAt: number;
 }
 
@@ -50,6 +52,7 @@ const DEFAULT_CORE: SessionCore = {
   ex2Idx: 0,
   revealed: false,
   promptsShown: false,
+  docShown: false,
   updatedAt: 0,
 };
 
