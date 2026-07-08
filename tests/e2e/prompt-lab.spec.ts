@@ -133,6 +133,23 @@ test("T7.3 — facilitator can pop a scannable join-QR overlay (header QR remove
   await expect(overlay).toHaveCount(0);
 });
 
+test("Key takeaways overlay — link next to Reset opens takeaways + PDF download", async ({ page: fac }) => {
+  await fac.goto(`${base}/facilitate`);
+  await fac.getByTestId("key-takeaways-link").click();
+  const ov = fac.getByTestId("takeaways-overlay");
+  await expect(ov).toBeVisible();
+  await expect(ov.getByText("The six-part anatomy of a great prompt")).toBeVisible();
+  await expect(ov.getByText("Tone is a business control, not a nicety")).toBeVisible();
+  // Download link points at the served PDF, which must exist (200).
+  const href = await fac.getByTestId("download-pdf").getAttribute("href");
+  expect(href).toBe("/key-takeaways.pdf");
+  const pdf = await fac.request.get(`${base}/key-takeaways.pdf`);
+  expect(pdf.status()).toBe(200);
+  expect(pdf.headers()["content-type"]).toContain("pdf");
+  await fac.keyboard.press("Escape");
+  await expect(ov).toHaveCount(0);
+});
+
 test("T1.3 invalid code — clear 404, no crash", async ({ page }) => {
   const res = await page.goto(`${base}/join/9999`);
   expect(res?.status()).toBe(404);

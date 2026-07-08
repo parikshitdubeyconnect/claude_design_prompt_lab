@@ -45,16 +45,21 @@ export default function FacilitatorScreen() {
   const [tipKey, setTipKey] = useState<FrameworkKey | null>(null);
   const [url, setUrl] = useState("https://prompt-lab.vercel.app/join/" + code);
   const [showQR, setShowQR] = useState(false);
+  const [showTakeaways, setShowTakeaways] = useState(false);
 
   useEffect(() => setUrl(joinUrl(code)), [code]);
 
-  // Keyboard shortcut: press "q" to pop the join-QR overlay on the projected screen.
+  // Keyboard shortcuts: "q" pops the join-QR overlay, "k" the key-takeaways panel.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const t = e.target as HTMLElement | null;
       if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA")) return;
       if (e.key === "q" || e.key === "Q") setShowQR((v) => !v);
-      if (e.key === "Escape") setShowQR(false);
+      if (e.key === "k" || e.key === "K") setShowTakeaways((v) => !v);
+      if (e.key === "Escape") {
+        setShowQR(false);
+        setShowTakeaways(false);
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -250,6 +255,14 @@ export default function FacilitatorScreen() {
             />
 
             <div style={{ flex: 1 }} />
+            <button
+              data-testid="key-takeaways-link"
+              onClick={() => setShowTakeaways(true)}
+              style={{ padding: "8px 6px", border: "none", background: "transparent", color: "#00B8F5", fontFamily: "inherit", fontSize: 12.5, fontWeight: 700, cursor: "pointer", textDecoration: "underline", textUnderlineOffset: 3 }}
+              title="Show the key takeaways (shortcut: K)"
+            >
+              ★ Key takeaways
+            </button>
             <button
               onClick={() => control("reset")}
               style={{ padding: "8px 14px", borderRadius: 999, border: "1px solid rgba(140,170,210,0.3)", background: "transparent", color: "#93A9C6", fontFamily: "inherit", fontSize: 12, fontWeight: 600, cursor: "pointer" }}
@@ -451,6 +464,101 @@ export default function FacilitatorScreen() {
       </main>
 
       {showQR && <QROverlay url={url} onClose={() => setShowQR(false)} />}
+      {showTakeaways && <KeyTakeawaysOverlay onClose={() => setShowTakeaways(false)} />}
+    </div>
+  );
+}
+
+// ── Key takeaways overlay (facilitator debrief; projector-friendly) ──
+const TAKEAWAYS_RATING = [
+  ["Precision in, precision out.", "A vague prompt earns a vague answer — the model mirrors the quality of your ask."],
+  ["More isn't better.", 'Overcooked prompts — piling on roles, contradictory limits like "20 tables in 150 words", asking it to invent what’s missing — backfire. Right-size the ask.'],
+  ["Judge a prompt by its anatomy.", "The winner isn’t the longest or fanciest; it’s the one that’s specific, structured and honest about uncertainty."],
+];
+const TAKEAWAYS_WRITING = [
+  ["Anchor it to the actual task.", "Write the prompt in context to what’s being asked or produced — the artefact, the reader, the decision it feeds."],
+  ["Specify the exact format.", "Numbered sections, a table, a word limit — the shape you want back."],
+  ["Tell it what not to do.", "For BRDs, credit memos, legacy code: don’t invent, don’t resolve ambiguities, flag hidden rules with evidence, and say when data is stale rather than guess."],
+];
+
+function KeyTakeawaysOverlay({ onClose }: { onClose: () => void }) {
+  return (
+    <div
+      data-testid="takeaways-overlay"
+      onClick={onClose}
+      style={{ position: "fixed", inset: 0, zIndex: 100, background: "rgba(6,15,28,0.86)", ...blur, display: "flex", alignItems: "flex-start", justifyContent: "center", overflow: "auto", padding: "40px 20px" }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{ width: "100%", maxWidth: 960, background: GLASS, ...blur, border: "1px solid rgba(140,170,210,0.28)", boxShadow: PANEL_SHADOW, borderRadius: 20, padding: "26px 28px", display: "flex", flexDirection: "column", gap: 16, cursor: "default" }}
+      >
+        <div style={{ display: "flex", alignItems: "baseline", gap: 12 }}>
+          <div style={{ fontSize: 22, fontFamily: "var(--font-space-grotesk)", fontWeight: 700, letterSpacing: "-0.01em", color: "#E8F0FA" }}>Key takeaways</div>
+          <div style={{ fontSize: 13, color: "#93A9C6" }}>What the two exercises teach about prompting</div>
+          <div style={{ flex: 1 }} />
+          <button onClick={onClose} style={{ padding: "6px 12px", borderRadius: 999, border: "1px solid rgba(140,170,210,0.3)", background: "transparent", color: "#93A9C6", fontFamily: "inherit", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>Close ✕</button>
+        </div>
+
+        {/* six-part framework strip */}
+        <div>
+          <div style={{ fontSize: 11, fontFamily: "var(--font-space-grotesk)", fontWeight: 700, letterSpacing: "1px", color: "#33E0A0", textTransform: "uppercase", marginBottom: 8 }}>The six-part anatomy of a great prompt</div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+            {LEGEND.map((lg) => (
+              <div key={lg.k} style={{ display: "flex", alignItems: "center", gap: 7, padding: "6px 12px", borderRadius: 999, border: "1px solid rgba(140,170,210,0.25)", background: "rgba(8,24,42,0.5)" }}>
+                <span style={{ width: 10, height: 10, borderRadius: 3, background: COLORS[lg.k] }} />
+                <span style={{ fontSize: 12.5, fontWeight: 700, color: "#E8F0FA" }}>{lg.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* two columns */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
+          <TakeColumn title="Rating the prompts" color="#C9B4FF" items={TAKEAWAYS_RATING} startAt={1} />
+          <TakeColumn title="Writing the prompt" color="#ACEAFF" items={TAKEAWAYS_WRITING} startAt={4} />
+        </div>
+
+        {/* tone callout */}
+        <div style={{ borderLeft: "3px solid #1E49E2", background: "rgba(30,73,226,0.12)", borderRadius: "0 10px 10px 0", padding: "12px 16px" }}>
+          <div style={{ fontSize: 13.5, fontWeight: 700, color: "#E8F0FA", marginBottom: 3 }}>Tone is a business control, not a nicety</div>
+          <div style={{ fontSize: 13, color: "#C9D8EC", lineHeight: 1.6 }}>
+            For <b>customer- and front-facing</b> communication, the tonality you specify drives how the output lands — warmth, formality, no jargon. For <b>internal, engineering or AI/developer-led</b> prompts it matters far less: spend the words on precision, evidence and structure instead.
+          </div>
+        </div>
+
+        {/* overarching + download */}
+        <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap", borderTop: "1px solid rgba(140,170,210,0.16)", paddingTop: 14 }}>
+          <div style={{ flex: 1, minWidth: 260, fontSize: 12.5, color: "#93A9C6", lineHeight: 1.6 }}>
+            <b style={{ color: "#E8F0FA" }}>Judgement stays with you</b> — AI drafts, you decide. &nbsp;·&nbsp; <b style={{ color: "#E8F0FA" }}>Governance first</b> — synthetic scenarios only; never enter client or personal data.
+          </div>
+          <a
+            data-testid="download-pdf"
+            href="/key-takeaways.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ padding: "11px 20px", borderRadius: 10, background: "linear-gradient(135deg, #1E49E2 0%, #0090E0 100%)", color: "#fff", boxShadow: "0 4px 18px rgba(0,144,224,0.35)", fontSize: 14, fontWeight: 700, textDecoration: "none", whiteSpace: "nowrap" }}
+          >
+            Download the full PDF ↓
+          </a>
+        </div>
+        <div style={{ fontSize: 11.5, color: "#93A9C6", textAlign: "center" }}>The PDF also covers day-to-day prompting habits and guardrails for LLMs embedded in Salesforce / Dynamics · press Esc to close</div>
+      </div>
+    </div>
+  );
+}
+
+function TakeColumn({ title, color, items, startAt }: { title: string; color: string; items: string[][]; startAt: number }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      <div style={{ fontSize: 13, fontFamily: "var(--font-space-grotesk)", fontWeight: 700, letterSpacing: "0.5px", color }}>{title}</div>
+      {items.map(([k, d], i) => (
+        <div key={i} style={{ display: "flex", gap: 10, alignItems: "baseline" }}>
+          <span style={{ fontSize: 13, fontWeight: 700, color, minWidth: 16 }}>{startAt + i}</span>
+          <div style={{ fontSize: 13, color: "#C9D8EC", lineHeight: 1.55 }}>
+            <span style={{ fontWeight: 700, color: "#E8F0FA" }}>{k}</span> {d}
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
