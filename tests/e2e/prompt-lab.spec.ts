@@ -176,6 +176,31 @@ test("Document flash — facilitator flashes the scenario document onto every de
   await p.ctx.close();
 });
 
+test("Document flash (rate) — facilitator flashes the credit memo onto every device", async ({ browser, page: fac }) => {
+  await fac.goto(`${base}/facilitate`);
+  await reset(fac);
+  await fac.reload();
+  await fac.getByRole("button", { name: /Rate the prompts/ }).click();
+  await fac.getByTestId("menu-item-2.1").click();
+
+  const p = await newParticipant(browser);
+  await p.page.getByTestId("join-btn").click();
+  await expect(p.page.getByText("Eyes on the big screen")).toBeVisible({ timeout: 8000 });
+
+  // Flash the artefact (credit memo)
+  await fac.getByTestId("toggle-doc").click();
+  await expect(fac.getByTestId("document-overlay")).toBeVisible();
+  await expect(fac.getByTestId("document-overlay")).toContainText(/Meridian Textiles/);
+  // …it appears on the participant device too, even mid-rating-wait
+  await expect(p.page.getByTestId("doc-overlay")).toBeVisible({ timeout: 8000 });
+  await expect(p.page.getByTestId("doc-overlay")).toContainText(/Meridian Textiles/);
+
+  await fac.keyboard.press("Escape");
+  await expect(fac.getByTestId("document-overlay")).toHaveCount(0);
+  await expect(p.page.getByTestId("doc-overlay")).toHaveCount(0, { timeout: 8000 });
+  await p.ctx.close();
+});
+
 test("T1.3 invalid code — clear 404, no crash", async ({ page }) => {
   const res = await page.goto(`${base}/join/9999`);
   expect(res?.status()).toBe(404);

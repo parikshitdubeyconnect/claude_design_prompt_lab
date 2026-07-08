@@ -45,6 +45,12 @@ export default function ParticipantScreen({ code }: { code: string }) {
   const scen1 = EX1_SCEN[ex1Idx];
   const scen2 = EX2_SCEN[ex2Idx];
 
+  // The document the facilitator can flash — the write exercise pushes its
+  // source material, the rate exercise pushes the artefact (e.g. credit memo).
+  const docPhase = phase === "ex1" || phase === "ex2";
+  const docTitle = phase === "ex2" ? scen2.name : scen1.name;
+  const docBody = phase === "ex2" ? scen2.artifact : scen1.material;
+
   // Follow the facilitator's document flash; allow a local dismiss so the
   // participant can get back to typing (a re-flash reopens it).
   const [docOpen, setDocOpen] = useState(false);
@@ -315,8 +321,8 @@ export default function ParticipantScreen({ code }: { code: string }) {
           </div>
         )}
 
-        {/* Document flash — pushed from the facilitator (write exercise) */}
-        {joined && phase === "ex1" && docShown && !docOpen && (
+        {/* Document flash — pushed from the facilitator (write or rate exercise) */}
+        {joined && docPhase && docShown && !docOpen && (
           <button
             data-testid="doc-banner"
             onClick={() => setDocOpen(true)}
@@ -325,15 +331,15 @@ export default function ParticipantScreen({ code }: { code: string }) {
             📄 The facilitator is showing a document — tap to view
           </button>
         )}
-        {joined && phase === "ex1" && docOpen && (
+        {joined && docPhase && docOpen && (
           <div data-testid="doc-overlay" style={{ position: "absolute", inset: 0, zIndex: 50, background: "rgba(8,20,36,0.97)", ...blur, display: "flex", flexDirection: "column", padding: `${topPad} 18px calc(env(safe-area-inset-bottom, 0px) + 16px)`, gap: 12 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <span style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: "1px", color: "#00B8F5", textTransform: "uppercase" }}>Document</span>
-              <div style={{ fontSize: 16, fontFamily: "var(--font-space-grotesk)", fontWeight: 700, letterSpacing: "-0.01em" }}>{scen1.name}</div>
+              <div style={{ fontSize: 16, fontFamily: "var(--font-space-grotesk)", fontWeight: 700, letterSpacing: "-0.01em" }}>{docTitle}</div>
               <div style={{ flex: 1 }} />
               <button onClick={() => setDocOpen(false)} style={{ padding: "6px 12px", borderRadius: 999, border: "1px solid rgba(140,170,210,0.3)", background: "transparent", color: "#93A9C6", fontFamily: "inherit", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>Close ✕</button>
             </div>
-            <div className="pl-scroll" style={{ flex: 1, overflow: "auto", fontSize: 13.5, lineHeight: 1.65, color: "#E8F0FA", background: INSET, borderRadius: 12, padding: 14, whiteSpace: "pre-wrap" }}>{scen1.material}</div>
+            <div className="pl-scroll" style={{ flex: 1, overflow: "auto", fontSize: 13.5, lineHeight: 1.65, color: "#E8F0FA", background: INSET, borderRadius: 12, padding: 14, whiteSpace: "pre-wrap" }}>{docBody}</div>
             <div style={{ fontSize: 11, color: "#93A9C6", textAlign: "center" }}>Shown by the facilitator · tap Close to return</div>
           </div>
         )}

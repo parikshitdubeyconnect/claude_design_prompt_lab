@@ -24,6 +24,17 @@ const INSET = "rgba(8,24,42,0.72)";
 const PANEL_SHADOW = "0 10px 34px rgba(2,8,18,0.35)";
 const blur = { backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)" } as const;
 
+// Facilitator talking-points surfaced as hover tooltips in the spotlight —
+// each says what to look for so the debrief writes itself.
+const SPOT_INSIGHT: Record<string, string> = {
+  Role: "Role — does it tell the AI who to be? Naming a role (a senior credit analyst, a modernisation architect) sharpens the expertise and voice you get back.",
+  Context: "Context — does it set the situation and audience? Who reads this, how long they have, and the decision it feeds.",
+  Format: "Format — does it pin the exact shape of the answer? Numbered sections, a table, a word count.",
+  Constraints: "Constraints / tone — does it say how long, what register, and what to avoid? e.g. 'under 180 words, neutral, don't guess.'",
+};
+const ANALYSE_TIP =
+  "Runs this exact prompt against the live model, so the room sees the quality of answer a prompt like this actually produces — weaknesses and all.";
+
 function pillStyle(active: boolean) {
   return {
     bg: active ? "linear-gradient(135deg, #1E49E2, #0090E0)" : "transparent",
@@ -361,7 +372,7 @@ export default function FacilitatorScreen() {
                           {checksFor(spot.text).map((ck) => {
                             const s = checkChipStyle(ck.ok);
                             return (
-                              <span key={ck.name} style={{ padding: "3px 9px", borderRadius: 999, fontSize: 10, fontWeight: 700, background: s.bg, color: s.color, border: `1px solid ${s.border}` }}>
+                              <span key={ck.name} title={SPOT_INSIGHT[ck.name]} style={{ padding: "3px 9px", borderRadius: 999, fontSize: 10, fontWeight: 700, background: s.bg, color: s.color, border: `1px solid ${s.border}`, cursor: "help" }}>
                                 {s.mark} {ck.name}
                               </span>
                             );
@@ -373,11 +384,12 @@ export default function FacilitatorScreen() {
                         <button
                           data-testid="run-claude"
                           onClick={runSpot}
+                          title={ANALYSE_TIP}
                           style={{ padding: "10px 20px", borderRadius: 10, border: "none", background: "linear-gradient(135deg, #1E49E2 0%, #0090E0 100%)", color: "#fff", boxShadow: "0 4px 18px rgba(0,144,224,0.35)", fontFamily: "inherit", fontSize: 14, fontWeight: 700, cursor: spotStreaming ? "default" : "pointer", opacity: spotStreaming ? 0.55 : 1 }}
                         >
-                          {spotStreaming && !spotOut ? "Calling Claude…" : "Run with Claude ▸"}
+                          {spotStreaming && !spotOut ? "Analysing…" : "Analyse ▸"}
                         </button>
-                        <span style={{ fontSize: 12, color: "#93A9C6" }}>claude-sonnet · live call</span>
+                        <span title={ANALYSE_TIP} style={{ fontSize: 12, color: "#93A9C6", cursor: "help" }}>live model call · hover for what this shows</span>
                       </div>
                       {spotHasRun && (
                         <div data-testid="spotlight-output" className="pl-scroll" style={{ background: INSET, border: "1px solid rgba(140,170,210,0.12)", borderRadius: 12, padding: 14, fontSize: 13, lineHeight: 1.65, color: "#DCE7F5", whiteSpace: "pre-wrap", maxHeight: 320, overflow: "auto" }}>
@@ -401,6 +413,15 @@ export default function FacilitatorScreen() {
                 <div style={{ display: "flex", gap: 20, alignItems: "baseline" }}>
                   <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "1px", color: "#9F7BFF", textTransform: "uppercase", whiteSpace: "nowrap" }}>{scen2.num} · The artefact</div>
                   <div style={{ fontSize: 15, lineHeight: 1.55, color: "#C9D8EC" }}>{scen2.ask}</div>
+                  <div style={{ flex: 1 }} />
+                  <button
+                    data-testid="toggle-doc"
+                    onClick={() => control("toggleDoc")}
+                    title="Flash the full artefact on this screen and onto every phone (shortcut: D)"
+                    style={{ padding: "7px 14px", borderRadius: 999, border: `1px solid ${docShown ? "#9F7BFF" : "rgba(159,123,255,0.4)"}`, background: docShown ? "rgba(159,123,255,0.18)" : "transparent", color: "#C9B4FF", fontFamily: "inherit", fontSize: 12, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}
+                  >
+                    {docShown ? "● Document on screen" : "📄 Show document"}
+                  </button>
                 </div>
                 <div style={{ fontSize: 12.5, lineHeight: 1.6, color: "#93A9C6", background: INSET, borderRadius: 10, padding: "12px 14px", whiteSpace: "pre-wrap" }}>{scen2.artifact}</div>
               </div>
@@ -477,6 +498,9 @@ export default function FacilitatorScreen() {
       {showTakeaways && <KeyTakeawaysOverlay onClose={() => setShowTakeaways(false)} />}
       {docShown && phase === "ex1" && (
         <DocumentOverlay title={scen1.name} body={scen1.material} onClose={() => control("toggleDoc")} />
+      )}
+      {docShown && phase === "ex2" && (
+        <DocumentOverlay title={scen2.name} body={scen2.artifact} onClose={() => control("toggleDoc")} />
       )}
     </div>
   );

@@ -54,7 +54,7 @@ export const EX1_SCEN: Ex1Scenario[] = [
   {
     num: "3.1",
     name: "Document summarization",
-    ask: "You're a senior leader walking into the committee meeting. Summarise the document below into five key takeaways you can lead the discussion from. Write the prompt you'd give an AI assistant.",
+    ask: "You're a senior leader walking into an operational review meeting. Summarise the document below into five key takeaways you can lead the discussion from. Write the prompt you'd give an AI assistant.",
     material:
       "BOARD PRE-READ (SYNTHETIC) — Commercial Banking Quarterly Review, Q2 FY25\n\nPortfolio: Commercial lending book INR 12,400 Cr, up 6% QoQ. New-to-bank acquisition ahead of plan (+14%), but concentrated in two sectors (textiles, auto components) now 41% of incremental exposure. Net interest margin compressed 12 bps to 3.28% on deposit repricing; a further 5–8 bps of pressure is expected next quarter.\n\nAsset quality: GNPA stable at 2.1%, but early-warning signals rose in mid-market (SMA-2 up from 3.4% to 4.6%), driven by receivable stretch among export-linked clients after the new EU norms. Restructured book INR 210 Cr, of which INR 40 Cr is showing renewed stress.\n\nOperations & technology: the core-banking upgrade is 8 weeks behind schedule; two payroll-processing incidents this quarter (since remediated) affected 3 corporate clients. Trade-finance digital adoption reached 58% against a 65% target.\n\nPeople & risk: relationship-manager attrition is 18% (sector average 14%), with two key resignations on the large-corporate desk. An RBI thematic review on related-party exposures is scheduled next quarter; compliance has requested additional analyst headcount.\n\nAsks for the committee: (1) approve tighter sector caps for textiles/auto; (2) sign off INR 6 Cr additional tech spend to recover the core-banking timeline; (3) decide the RM retention package; (4) note the EU-norms impact on export clients.",
     subs: [
@@ -100,10 +100,10 @@ export const EX2_SCEN: Ex2Scenario[] = [
     artifact:
       "CREDIT MEMO (SYNTHETIC) - Meridian Textiles Pvt Ltd. Facility: INR 85 Cr working-capital limit, renewal + INR 20 Cr enhancement requested. FY25 revenue INR 412 Cr (+9% YoY), EBITDA margin 11.2% (down from 13.1%), interest cover 2.4x. 62% of revenue from two group-linked buyers in the UAE. Receivable days up from 68 to 94. Collateral: industrial property (FY23 valuation INR 64 Cr), personal guarantees of both promoters. Audit note flags related-party sales ~8% above market. New EU sustainability rules may affect 30% of export volumes from Q3.",
     prompts: [
-      { label: "Prompt A", tier: "over", text: "You are a world-renowned chief risk officer with 40 years across 12 global banks. First restate the memo in full, then produce a SWOT, a PESTLE, a five-forces analysis and a 20-row risk register with probability and impact scores to two decimal places, then a summary of each summary, three alternative recommendations with confidence intervals, plus full legal disclaimers - all formatted as nested tables. Do not exceed 150 words." },
+      { label: "Prompt A", tier: "over", text: "You are a world-renowned chief risk officer with 40 years across 12 global banks. Produce a five-forces analysis and a 20-row risk register with probability and impact scores to two decimal places, then a summary of each summary, three alternative recommendations with confidence intervals, plus full legal disclaimers and a colour-coded heat map, all formatted as deeply nested tables. Do not exceed 150 words." },
       { label: "Prompt B", tier: "okay", text: "Summarise this credit memo in five bullet points for a risk committee. Highlight the key risks and end with a recommendation." },
       { label: "Prompt C", tier: "fant", text: 'You are a senior credit risk analyst. The risk committee will have three minutes to read your pre-read. Summarise the memo as: 1) Exposure snapshot, 2) Top three risks ranked, 3) Mitigants, 4) Recommendation, 5) One open question. Under 180 words, neutral tone; where data is stale, say so - do not guess. Phrase risks concretely, e.g. "Concentration: 62% of revenue from two buyers."' },
-      { label: "Prompt D", tier: "bad", text: "Summarise this credit memo." },
+      { label: "Prompt D", tier: "bad", text: "Have a look at this credit memo and give me a summary of it, covering the main points and whatever else you think is relevant, and let me know your overall view on the company." },
     ],
     segs: [
       { k: "role", t: "You are a senior credit risk analyst." },
@@ -144,8 +144,8 @@ export const EX2_SCEN: Ex2Scenario[] = [
     prompts: [
       { label: "Prompt A", tier: "fant", text: 'You are a modernisation architect who has migrated core-banking batch systems. This 20-year-old routine sits in our EOD interest-accrual chain; the author has left and we plan a move to a Java microservice. Produce a modernisation brief: 1) Plain-English summary, 2) Inputs/outputs and side effects, 3) Hidden business rules, each with a line reference, 4) Migration risks, 5) Target design. Flag anything the code implies but never states - do not assume standard behaviour. Quote evidence, e.g. "Rule: penal interest waived when DAYS-LATE < 3 (line 4)."' },
       { label: "Prompt B", tier: "over", text: "You are the world's best 10x engineer. Rewrite this routine in Java, Python, Go and Rust with unit tests for each, produce UML, sequence and ER diagrams in ASCII, estimate story points, and modernise it to microservices, serverless and blockchain simultaneously. Silently fix any bugs you find without documenting them. Keep the answer brief." },
-      { label: "Prompt C", tier: "okay", text: "Summarise what this legacy batch routine does and suggest how to modernise it as a Java service." },
-      { label: "Prompt D", tier: "bad", text: "Explain this code." },
+      { label: "Prompt C", tier: "okay", text: "Summarise what this legacy batch routine does, walk through the main steps it performs, and suggest how we could modernise it as a Java service. Call out anything that looks like a business rule if you notice it." },
+      { label: "Prompt D", tier: "bad", text: "Take a look at this old piece of code and explain what it does, and mention anything else you think might be worth knowing about it." },
     ],
     segs: [
       { k: "role", t: "You are a modernisation architect who has migrated core-banking batch systems." },
