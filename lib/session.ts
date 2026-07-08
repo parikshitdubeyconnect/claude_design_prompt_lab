@@ -18,6 +18,8 @@ export interface SessionCore {
   ex1Idx: number;
   ex2Idx: number;
   revealed: boolean;
+  /** Rate exercise gate: prompts stay hidden (and rating closed) until shown. */
+  promptsShown: boolean;
   updatedAt: number;
 }
 
@@ -32,6 +34,7 @@ export interface RatingTally {
   not: number;
   ok: number;
   fa: number;
+  ov: number;
 }
 
 export interface SessionSnapshot extends SessionCore {
@@ -46,6 +49,7 @@ const DEFAULT_CORE: SessionCore = {
   ex1Idx: 0,
   ex2Idx: 0,
   revealed: false,
+  promptsShown: false,
   updatedAt: 0,
 };
 
@@ -64,7 +68,8 @@ export function isValidCode(code: string): boolean {
 // ── Core state ──
 export async function getCore(code: string): Promise<SessionCore> {
   const kv = getKV();
-  return (await kv.getJSON<SessionCore>(kCore(code))) ?? { ...DEFAULT_CORE };
+  const stored = await kv.getJSON<Partial<SessionCore>>(kCore(code));
+  return { ...DEFAULT_CORE, ...(stored ?? {}) };
 }
 
 export async function setCore(code: string, patch: Partial<SessionCore>): Promise<SessionCore> {
@@ -115,7 +120,7 @@ export async function getSubmissions(code: string, ex1Idx: number): Promise<Subm
 }
 
 // ── Ratings (Exercise 3.x) ──
-const TIER_FIELDS = ["not", "ok", "fa"] as const;
+const TIER_FIELDS = ["not", "ok", "fa", "ov"] as const;
 type TierField = (typeof TIER_FIELDS)[number];
 
 export async function submitRatings(
@@ -138,8 +143,8 @@ export async function submitRatings(
 
 export async function getRatings(code: string, ex2Idx: number): Promise<RatingTally[]> {
   const all = await getKV().hgetall(kRatings(code, ex2Idx));
-  const promptCount = EX2_SCEN[ex2Idx]?.prompts.length ?? 3;
-  const out: RatingTally[] = Array.from({ length: promptCount }, () => ({ not: 0, ok: 0, fa: 0 }));
+  const promptCount = EX2_SCEN[ex2Idx]?.prompts.length ?? 4;
+  const out: RatingTally[] = Array.from({ length: promptCount }, () => ({ not: 0, ok: 0, fa: 0, ov: 0 }));
   if (!all) return out;
   for (const [field, val] of Object.entries(all)) {
     const [idxStr, tier] = field.split(":");

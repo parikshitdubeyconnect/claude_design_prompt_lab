@@ -5,8 +5,8 @@ import { EX2_SCEN } from "@/lib/scenarios";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-type TierField = "not" | "ok" | "fa";
-const VALID: TierField[] = ["not", "ok", "fa"];
+type TierField = "not" | "ok" | "fa" | "ov";
+const VALID: TierField[] = ["not", "ok", "fa", "ov"];
 
 // POST /api/session/:code/rate  — a participant submits their rating set
 // body: { pid, picks: ('not'|'ok'|'fa'|null)[] }
@@ -25,6 +25,10 @@ export async function POST(req: NextRequest, { params }: { params: { code: strin
   const core = await getCore(code);
   if (core.phase !== "ex2") {
     return NextResponse.json({ error: "Not rating right now" }, { status: 409 });
+  }
+  // Gate: participants cannot rate until the facilitator reveals the prompts.
+  if (!core.promptsShown) {
+    return NextResponse.json({ error: "Prompts not shown yet" }, { status: 409 });
   }
   const promptCount = EX2_SCEN[core.ex2Idx].prompts.length;
   const raw = Array.isArray(body.picks) ? body.picks : [];

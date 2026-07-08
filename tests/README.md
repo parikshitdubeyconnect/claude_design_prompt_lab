@@ -2,6 +2,23 @@
 
 Automated tests mapped to `project/design_handoff_prompt_lab/TEST_PLAN.md`.
 
+## v2 design update — added coverage
+
+The design changed (see `project/design_handoff_prompt_lab/CHANGES.md`): exercises
+were reordered (**Exercise 2 = Rate**, **Exercise 3 = Write**), Rate now has **four
+prompts A–D** with an **"Overcooked"** tier, prompts are **hidden behind a "Show
+prompts" gate**, participants **rate one prompt at a time**, and the header QR moved
+to the join page + a facilitator **QR overlay**. Tests updated accordingly:
+
+- Unit: four-prompt tier sets incl. `over`, four rating options, winner-position
+  varies, and the "longest prompt at A or B" ordering rule.
+- API: rating is **rejected (409) before Show prompts** (server-enforced gate),
+  four-pick aggregation/idempotency, and scenario-switch re-hides prompts.
+- E2E: gated + sequential rating flow (Prompt N of 4 → auto-submit), Overcooked
+  verdict on reveal, late-join onto Write, and the pop-up join-QR overlay.
+
+Totals: **35 tests** (16 unit / 13 api / 6 e2e).
+
 ## Layout
 
 | Folder        | Runner                | What                                                        |

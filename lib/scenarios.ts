@@ -2,7 +2,7 @@
 // Claude system prompt — ported verbatim from the Prompt Lab design source
 // (`Prompt Lab v2.dc.html`, class Component). All content is SYNTHETIC.
 
-export type Tier = "bad" | "okay" | "fant";
+export type Tier = "bad" | "okay" | "fant" | "over";
 
 export interface Ex1Submission {
   name: string;
@@ -52,7 +52,7 @@ export const SYS =
 
 export const EX1_SCEN: Ex1Scenario[] = [
   {
-    num: "2.1",
+    num: "3.1",
     name: "Client escalation email",
     ask: "A 12-year corporate client, Vertex Logistics, has had two payroll payment files fail in three weeks. Their CFO has escalated to your regional head and hinted at moving their operating accounts. The fixes are underway. Write the prompt you'd give an AI assistant to draft your reply email to the CFO.",
     material:
@@ -66,7 +66,7 @@ export const EX1_SCEN: Ex1Scenario[] = [
     ],
   },
   {
-    num: "2.2",
+    num: "3.2",
     name: "Requirements document",
     ask: "Business users have sent messy requirement notes for a top-up loan enhancement, and your bank has a BRD standard every requirements document must follow. Write the prompt you'd give an AI assistant to draft a good requirements document from these notes.",
     material:
@@ -79,7 +79,7 @@ export const EX1_SCEN: Ex1Scenario[] = [
     ],
   },
   {
-    num: "2.3",
+    num: "3.3",
     name: "Legacy code modernisation",
     ask: "A 20-year-old undocumented batch routine in your EOD interest-accrual chain needs to move to a modern service. The original author has left. Write the prompt you'd give an AI assistant to summarise it and propose a modernisation plan — precise enough to surface the hidden business rules.",
     material:
@@ -95,15 +95,16 @@ export const EX1_SCEN: Ex1Scenario[] = [
 
 export const EX2_SCEN: Ex2Scenario[] = [
   {
-    num: "3.1",
+    num: "2.1",
     name: "Credit memo summary",
-    ask: "Summarise the credit memo below for a risk committee pre-read. Which of these three prompts would you trust with it?",
+    ask: "Summarise the credit memo below for a risk committee pre-read. Which of these four prompts would you trust with it?",
     artifact:
       "CREDIT MEMO (SYNTHETIC) - Meridian Textiles Pvt Ltd. Facility: INR 85 Cr working-capital limit, renewal + INR 20 Cr enhancement requested. FY25 revenue INR 412 Cr (+9% YoY), EBITDA margin 11.2% (down from 13.1%), interest cover 2.4x. 62% of revenue from two group-linked buyers in the UAE. Receivable days up from 68 to 94. Collateral: industrial property (FY23 valuation INR 64 Cr), personal guarantees of both promoters. Audit note flags related-party sales ~8% above market. New EU sustainability rules may affect 30% of export volumes from Q3.",
     prompts: [
-      { label: "Prompt A", tier: "okay", text: "Summarise this credit memo in five bullet points for a risk committee. Highlight the key risks and end with a recommendation." },
-      { label: "Prompt B", tier: "bad", text: "Summarise this credit memo." },
+      { label: "Prompt A", tier: "over", text: "You are a world-renowned chief risk officer with 40 years across 12 global banks. First restate the memo in full, then produce a SWOT, a PESTLE, a five-forces analysis and a 20-row risk register with probability and impact scores to two decimal places, then a summary of each summary, three alternative recommendations with confidence intervals, plus full legal disclaimers - all formatted as nested tables. Do not exceed 150 words." },
+      { label: "Prompt B", tier: "okay", text: "Summarise this credit memo in five bullet points for a risk committee. Highlight the key risks and end with a recommendation." },
       { label: "Prompt C", tier: "fant", text: 'You are a senior credit risk analyst. The risk committee will have three minutes to read your pre-read. Summarise the memo as: 1) Exposure snapshot, 2) Top three risks ranked, 3) Mitigants, 4) Recommendation, 5) One open question. Under 180 words, neutral tone; where data is stale, say so - do not guess. Phrase risks concretely, e.g. "Concentration: 62% of revenue from two buyers."' },
+      { label: "Prompt D", tier: "bad", text: "Summarise this credit memo." },
     ],
     segs: [
       { k: "role", t: "You are a senior credit risk analyst." },
@@ -115,15 +116,16 @@ export const EX2_SCEN: Ex2Scenario[] = [
     ],
   },
   {
-    num: "3.2",
+    num: "2.2",
     name: "Requirements summary",
     ask: "Turn messy business requirement notes into a proper BRD. Which prompt gets you a document you could actually circulate?",
     artifact:
       "REQUIREMENT NOTES (SYNTHETIC, EXCERPT) - 'Branch users want faster approval for top-up loans. If existing customer >2 yrs vintage, skip income docs (but compliance said only below 5 lakh?). Bureau pull cached 30 days (risk to confirm). Out of scope: NRI customers (maybe phase 2). Auto-reject if score below 650 unless RM override.' BRD STANDARD - numbered FR-xx requirements with acceptance criteria; ambiguities logged, never resolved by the author.",
     prompts: [
-      { label: "Prompt A", tier: "bad", text: "Summarise these requirements." },
+      { label: "Prompt A", tier: "okay", text: "Turn these notes into a structured requirements document with sections for scope, functional requirements and open questions. Keep it under two pages." },
       { label: "Prompt B", tier: "fant", text: 'You are a senior business analyst in a lending technology team. These notes will become a BRD reviewed by architecture and compliance, and must follow the BRD standard provided. Draft the BRD as: 1) Objective, 2) In/out of scope, 3) Functional requirements numbered FR-01… each with acceptance criteria, 4) NFRs, 5) Dependencies, 6) Open questions. Do not invent or resolve anything - ambiguous or conflicting notes go under open questions. Write requirements testably, e.g. "FR-03: The system shall auto-flag applications where bureau score < 650."' },
-      { label: "Prompt C", tier: "okay", text: "Turn these notes into a structured requirements document with sections for scope, functional requirements and open questions. Keep it under two pages." },
+      { label: "Prompt C", tier: "over", text: "Act simultaneously as a business analyst, project manager, solution architect, compliance officer and UX researcher. Convert the notes into a BRD, plus user stories, test cases, a RACI matrix, a Gantt plan, API specifications and a data dictionary. Resolve every ambiguity yourself using best judgement, add any requirements you believe the business forgot, and keep the whole thing under one page." },
+      { label: "Prompt D", tier: "bad", text: "Summarise these requirements." },
     ],
     segs: [
       { k: "role", t: "You are a senior business analyst in a lending technology team." },
@@ -135,15 +137,16 @@ export const EX2_SCEN: Ex2Scenario[] = [
     ],
   },
   {
-    num: "3.3",
+    num: "2.3",
     name: "Code modernisation",
     ask: "Brief the modernisation of an undocumented legacy batch routine. Which prompt would surface the hidden business rules?",
     artifact:
       "LEGACY ROUTINE (SYNTHETIC, EXCERPT) - PROC ACCR-EOD: reads active accounts; computes daily interest for TL/WC products; silently waives penal interest when DAYS-LATE < 3; branch '019' gets an undocumented SPECIAL-ROUND; errors GOTO SKIP-REC with the record silently dropped; writes ACCR-FILE with no audit log. Called nightly - and by a month-end job nobody owns.",
     prompts: [
-      { label: "Prompt A", tier: "okay", text: "Summarise what this legacy batch routine does and suggest how to modernise it as a Java service." },
-      { label: "Prompt B", tier: "fant", text: 'You are a modernisation architect who has migrated core-banking batch systems. This 20-year-old routine sits in our EOD interest-accrual chain; the author has left and we plan a move to a Java microservice. Produce a modernisation brief: 1) Plain-English summary, 2) Inputs/outputs and side effects, 3) Hidden business rules, each with a line reference, 4) Migration risks, 5) Target design. Flag anything the code implies but never states - do not assume standard behaviour. Quote evidence, e.g. "Rule: penal interest waived when DAYS-LATE < 3 (line 4)."' },
-      { label: "Prompt C", tier: "bad", text: "Explain this code." },
+      { label: "Prompt A", tier: "fant", text: 'You are a modernisation architect who has migrated core-banking batch systems. This 20-year-old routine sits in our EOD interest-accrual chain; the author has left and we plan a move to a Java microservice. Produce a modernisation brief: 1) Plain-English summary, 2) Inputs/outputs and side effects, 3) Hidden business rules, each with a line reference, 4) Migration risks, 5) Target design. Flag anything the code implies but never states - do not assume standard behaviour. Quote evidence, e.g. "Rule: penal interest waived when DAYS-LATE < 3 (line 4)."' },
+      { label: "Prompt B", tier: "over", text: "You are the world's best 10x engineer. Rewrite this routine in Java, Python, Go and Rust with unit tests for each, produce UML, sequence and ER diagrams in ASCII, estimate story points, and modernise it to microservices, serverless and blockchain simultaneously. Silently fix any bugs you find without documenting them. Keep the answer brief." },
+      { label: "Prompt C", tier: "okay", text: "Summarise what this legacy batch routine does and suggest how to modernise it as a Java service." },
+      { label: "Prompt D", tier: "bad", text: "Explain this code." },
     ],
     segs: [
       { k: "role", t: "You are a modernisation architect who has migrated core-banking batch systems." },
@@ -161,6 +164,26 @@ export const VERDICTS: Record<Tier, [string, string, string]> = {
   bad: ["Not so good", "rgba(255,122,144,0.18)", "#FF9DAD"],
   okay: ["Okay", "rgba(255,181,71,0.18)", "#FFCB7A"],
   fant: ["Fantastic", "rgba(51,224,160,0.18)", "#7FF0C4"],
+  over: ["Overcooked", "rgba(255,142,60,0.18)", "#FFB27A"],
+};
+
+// The four rating options shown to participants and as facilitator aggregate bars.
+// key → [field, label, bar colour]
+export const RATING_OPTIONS: [RatingField, string, string][] = [
+  ["not", "Not so good", "#FF7A90"],
+  ["ok", "Okay", "#FFB547"],
+  ["fa", "Fantastic", "#33E0A0"],
+  ["ov", "Overcooked", "#FF8E3C"],
+];
+
+export type RatingField = "not" | "ok" | "fa" | "ov";
+
+// Which rating field a prompt's tier corresponds to (its "correct" bucket).
+export const TIER_FIELD: Record<Tier, RatingField> = {
+  bad: "not",
+  okay: "ok",
+  fant: "fa",
+  over: "ov",
 };
 
 export const COLORS: Record<FrameworkKey, string> = {
