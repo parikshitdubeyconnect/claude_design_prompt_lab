@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+  @page { size: A4; margin: 14mm 0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Helvetica Neue", Arial, system-ui, sans-serif;
+    color: #14263d; font-size: 10.5pt; line-height: 1.5;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .page { padding: 0 16mm; }
+  h1, h2, h3 { color: #0A1B30; margin: 0; }
+  a { color: #1E49E2; }
+
+  /* Header band */
+  .band {
+    background: linear-gradient(120deg, #0D2138 0%, #123054 55%, #163A64 100%);
+    color: #fff; padding: 18px 16mm; display: flex; align-items: center; gap: 14px;
+  }
+  .logo { width: 34px; height: 34px; border-radius: 9px; background: linear-gradient(135deg,#1E49E2,#0090E0);
+    display:flex; align-items:center; justify-content:center; font-weight:800; font-size:15px; color:#fff; }
+  .band .title { font-size: 17pt; font-weight: 800; letter-spacing: .2px; }
+  .band .sub { font-size: 9pt; color: #AFC4E0; margin-top: 2px; }
+  .band .right { margin-left: auto; font-size: 8pt; color:#FFCE8A; border:1px solid rgba(255,181,71,.5);
+    padding: 5px 10px; border-radius: 999px; white-space: nowrap; }
+
+  h2 { font-size: 12.5pt; margin: 18px 0 8px; padding-bottom: 5px; border-bottom: 2px solid #E3EAF3; }
+  h2 .n { color:#0090E0; font-weight:800; margin-right:8px; }
+  .lead { color:#4a5d75; margin: 2px 0 10px; }
+
+  /* Framework chips */
+  .frame { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 8px 0 2px; }
+  .chip { border:1px solid #E3EAF3; border-radius: 8px; padding: 8px 10px; }
+  .chip .h { display:flex; align-items:center; gap:7px; font-weight:800; color:#0A1B30; font-size:10pt; }
+  .sw { width: 11px; height: 11px; border-radius: 3px; flex: 0 0 auto; }
+  .chip .d { color:#4a5d75; font-size: 8.7pt; margin-top: 3px; }
+
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  ol.take { margin: 4px 0; padding-left: 18px; }
+  ol.take li { margin: 6px 0; }
+  .k { font-weight: 800; color: #0A1B30; }
+
+  .callout { border-left: 3px solid #1E49E2; background: #F3F7FD; border-radius: 0 8px 8px 0;
+    padding: 10px 14px; margin: 10px 0; }
+  .callout .t { font-weight: 800; color:#0A1B30; }
+
+  ul.tight { margin: 4px 0; padding-left: 18px; }
+  ul.tight li { margin: 4px 0; }
+
+  table.g { width:100%; border-collapse: collapse; margin-top: 6px; font-size: 9.4pt; }
+  table.g th, table.g td { text-align:left; vertical-align: top; padding: 7px 9px; border:1px solid #E3EAF3; }
+  table.g th { background:#F3F7FD; color:#0A1B30; font-weight:800; width: 34%; }
+
+  .foot { margin-top: 16px; padding: 10px 14px; border-radius: 8px; background:#0A1B30; color:#C9D8EC; font-size: 8.6pt; }
+  .foot b { color:#7FE0C4; }
+  .pill { display:inline-block; background:#EAF1FB; color:#1E49E2; border-radius:999px; padding:2px 9px; font-weight:700; font-size:8.4pt; }
+  .avoid { color:#B4304A; font-weight:700; }
+  .pagebreak { page-break-before: always; }
+</style>
+</head>
+<body>
+
+  <div class="band">
+    <div class="logo">PL</div>
+    <div>
+      <div class="title">Prompt Lab — Key Takeaways</div>
+      <div class="sub">Prompting for Leadership · Demystifying AI seminar</div>
+    </div>
+    <div class="right">Synthetic scenarios only — no client or personal data</div>
+  </div>
+
+  <div class="page">
+
+    <h2><span class="n">01</span>The six-part anatomy of a great prompt</h2>
+    <div class="lead">A fantastic prompt covers all six. Use it as a checklist before you hit send.</div>
+    <div class="frame">
+      <div class="chip"><div class="h"><span class="sw" style="background:#0090E0"></span>Role</div><div class="d">Who the AI should be — an analyst, an RM, an architect. Sets expertise and voice.</div></div>
+      <div class="chip"><div class="h"><span class="sw" style="background:#9F7BFF"></span>Context</div><div class="d">The situation and audience — who's reading, what they already know.</div></div>
+      <div class="chip"><div class="h"><span class="sw" style="background:#2Fb98a"></span>Task</div><div class="d">One clear, specific job to do.</div></div>
+      <div class="chip"><div class="h"><span class="sw" style="background:#E8952A"></span>Format</div><div class="d">The exact structure you want back — sections, table, word limit.</div></div>
+      <div class="chip"><div class="h"><span class="sw" style="background:#E5566E"></span>Constraints / Tone</div><div class="d">Length, register, and what to avoid. The dial that matters most for people-facing text.</div></div>
+      <div class="chip"><div class="h"><span class="sw" style="background:#4FB7DA"></span>Examples</div><div class="d">A short sample of the standard you expect.</div></div>
+    </div>
+
+    <h2><span class="n">02</span>What the exercises taught us</h2>
+    <div class="cols">
+      <div>
+        <h3 style="font-size:10.5pt;color:#7a5bd8;">Rating the prompts</h3>
+        <ol class="take">
+          <li><span class="k">Precision in, precision out.</span> A vague prompt earns a vague answer — the model mirrors the quality of your ask.</li>
+          <li><span class="k">More isn't better.</span> "Overcooked" prompts — piling on roles, contradictory limits (<em>"20 tables in 150 words"</em>), asking it to invent what's missing — backfire. Right-size the ask.</li>
+          <li><span class="k">Judge a prompt by its anatomy.</span> The winner isn't the longest or fanciest; it's the one that's specific, structured, and honest about uncertainty.</li>
+        </ol>
+      </div>
+      <div>
+        <h3 style="font-size:10.5pt;color:#0079c4;">Writing the prompt</h3>
+        <ol class="take" start="4">
+          <li><span class="k">Anchor it to the actual task.</span> Write the prompt <em>in context</em> to what's being asked or produced — the artefact, the reader, the decision it feeds.</li>
+          <li><span class="k">Specify the exact format</span> — numbered sections, a table, a word limit; the shape you want back.</li>
+          <li><span class="k">Tell it what <span class="avoid">not</span> to do.</span> For BRDs, credit memos, legacy code: don't invent, don't resolve ambiguities, flag hidden rules with evidence, and say when data is stale rather than guess.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="t">Tone is a business control, not a nicety</div>
+      For <b>customer- and front-facing</b> communication the <b>tonality you specify in the prompt</b> drives how the output lands — warmth, formality, no jargon, no grovelling. Getting it wrong is a relationship risk, so state it explicitly.
+      For <b>internal, engineering or AI/developer-led</b> prompts that same tonality matters far less — there, spend your words on <b>precision, evidence and structure</b> instead.
+      In short: <span class="pill">customer-facing → set the tone</span> <span class="pill">developer-led → optimise for precision</span>
+    </div>
+
+    <div class="cols">
+      <div>
+        <h3 style="font-size:10.5pt;">Overarching</h3>
+        <ul class="tight">
+          <li><span class="k">Judgement stays with you.</span> AI drafts, you decide. Keep a human in the loop for risk, compliance and client-facing work.</li>
+          <li><span class="k">Governance first.</span> Synthetic scenarios only — never enter client, personal or confidential data into consumer tools.</li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="font-size:10.5pt;">The reusable rule of thumb</h3>
+        <ul class="tight">
+          <li>Say <b>who</b> it is, <b>who</b> it's for, the <b>one</b> job, the <b>shape</b> of the answer, the <b>limits</b>, and <b>show an example</b>.</li>
+          <li>Then adjust <b>one</b> variable at a time — tone, or length, or format — rather than rewriting from scratch.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pagebreak"></div>
+
+    <h2><span class="n">03</span>What you can change day-to-day — copilots &amp; LLMs</h2>
+    <div class="lead">Small habits that lift quality immediately, whether you're in ChatGPT, Claude, Microsoft&nbsp;365 Copilot or Salesforce Einstein.</div>
+    <ul class="tight">
+      <li><span class="k">Open with role + context in one line.</span> <em>"You are a credit analyst writing a 3-minute pre-read for the risk committee…"</em></li>
+      <li><span class="k">State the format you want</span> before you ask — bullets, a table, five numbered sections, under 180 words.</li>
+      <li><span class="k">Add two constraints</span>: one on <b>tone</b> (for people-facing text) and one on <b>honesty</b> — <em>"neutral tone; where data is stale, say so — do not guess."</em></li>
+      <li><span class="k">Give it the source and pin it there.</span> Paste the memo/notes/code and say <em>"use only the material provided; don't add anything."</em></li>
+      <li><span class="k">Iterate by one variable.</span> If the answer's off, change the format <em>or</em> the length <em>or</em> the tone — not everything at once.</li>
+      <li><span class="k">Match effort to channel.</span> Customer-facing → set tone explicitly and review before sending. Code/analysis → prioritise precision, evidence and citations over voice.</li>
+      <li><span class="k">Ask for its assumptions and gaps.</span> <em>"List anything you were unsure about or had to assume"</em> surfaces risk you'd otherwise miss.</li>
+      <li><span class="avoid">Never</span> paste client, personal or confidential data into a consumer tool — use the sanctioned enterprise copilot with the trust controls turned on.</li>
+    </ul>
+
+    <h2><span class="n">04</span>Guardrails as configuration — LLMs embedded in an OEM</h2>
+    <div class="lead">When the LLM lives inside Salesforce (Einstein / Agentforce) or Microsoft Dynamics 365 &amp; Copilot, most guardrails are <b>platform configuration</b>, not code. Set them centrally so end users inherit them and can't strip them.</div>
+    <table class="g">
+      <tr><th>Ground the model to sanctioned data</th>
+        <td>Scope answers to approved objects/records only (Salesforce grounding &amp; Data Cloud; Dynamics via Dataverse). Enforce row-/field-level security so the assistant inherits each user's permissions — least privilege, no elevated service accounts.</td></tr>
+      <tr><th>Own the instruction layer</th>
+        <td>Bake role, tone and do/don't rules into the platform's prompt templates (Einstein Prompt Builder; Copilot Studio topics &amp; instructions) so they're applied server-side and users can't override them.</td></tr>
+      <tr><th>Turn on the trust / DLP layer</th>
+        <td>Salesforce Einstein Trust Layer: PII masking, toxicity detection, zero data-retention with the model vendor, full audit trail. Microsoft Purview DLP + sensitivity labels for Copilot; Azure OpenAI content filters set to the right severity.</td></tr>
+      <tr><th>Constrain the outputs</th>
+        <td>Require grounding/citations, enable toxicity &amp; grounding scoring, and configure the assistant to defer — <em>"I don't have that information"</em> — instead of hallucinating.</td></tr>
+      <tr><th>Human-in-the-loop for actions</th>
+        <td>For anything customer-facing (case replies, emails) or that writes data, configure <b>draft-only + approval workflow</b> rather than auto-send. Scope connectors/agent actions to read-only where possible.</td></tr>
+      <tr><th>Tone &amp; register by channel</th>
+        <td>Maintain separate prompt templates per channel — a formal, regulated tone for customer comms; a terser, precision-first template for internal/developer assistance. (This is the tonality lesson, encoded as config.)</td></tr>
+      <tr><th>Audit &amp; retention</th>
+        <td>Enable prompt/response logging, set zero-retention with the LLM vendor, and apply your retention &amp; monitoring policies. Review logs for drift and misuse.</td></tr>
+    </table>
+
+    <div class="foot">
+      <b>Remember:</b> the framework — Role · Context · Task · Format · Constraints/Tone · Examples — is the same whether you're typing into a chat box or configuring an enterprise copilot. In the copilot, you're just setting those defaults once, for everyone. &nbsp;·&nbsp; Prompt Lab · Prompting for Leadership · all scenarios synthetic.
+    </div>
+
+  </div>
+</body>
+</html>
